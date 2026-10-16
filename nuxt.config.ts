@@ -5,6 +5,10 @@ export default defineNuxtConfig({
 
   ssr: false,
 
+  experimental: {
+    appManifest: false
+  },
+
   modules: [
     '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
