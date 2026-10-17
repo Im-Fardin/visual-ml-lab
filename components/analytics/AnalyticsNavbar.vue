@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ArrowLeft, ChevronLeft, ChevronRight, Box, Sparkles } from 'lucide-vue-next'
-import type { AnalyticsTopic } from '~/data/analyticsCurriculum'
+import { ANALYTICS_TOPICS, type AnalyticsTopic } from '~/data/analyticsCurriculum'
 
 defineProps<{
   currentTopic: AnalyticsTopic
@@ -57,7 +57,7 @@ defineProps<{
         </span>
 
         <span class="text-xs font-mono text-muted px-1 hidden sm:inline">
-          {{ currentTopic.id }} / 18
+          {{ currentTopic.id }} / {{ ANALYTICS_TOPICS.length }}
         </span>
 
         <NuxtLink

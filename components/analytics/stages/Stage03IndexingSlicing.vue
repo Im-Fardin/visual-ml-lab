@@ -222,6 +222,18 @@ const initThree = () => {
 const rebuildScene = () => {
   if (!scene) return
 
+  // Dispose link lines
+  if (linkLinesGroup) {
+    while (linkLinesGroup.children.length > 0) {
+      const child = linkLinesGroup.children[0]
+      linkLinesGroup.remove(child)
+      if (child instanceof THREE.Line) {
+        child.geometry.dispose()
+        ;(child.material as THREE.Material).dispose()
+      }
+    }
+  }
+
   baseCubes.forEach((entry) => {
     scene?.remove(entry.mesh)
     entry.mesh.geometry.dispose()
@@ -413,17 +425,26 @@ const updateVisuals = () => {
     let currentVal = 0
 
     if (currentDim.value === '1D') {
-      const idx = Number(entry.key.split('_')[1])
+      const parts = entry.key.split('_')
+      if (parts[0] !== '1D') return
+      const idx = Number(parts[1])
       sliced = isSliced1D(idx)
-      currentVal = baseData1D.value[idx]
+      currentVal = baseData1D.value[idx] ?? 0
     } else if (currentDim.value === '2D') {
-      const [, r, c] = entry.key.split('_').map(Number)
+      const parts = entry.key.split('_')
+      if (parts[0] !== '2D') return
+      const r = Number(parts[1])
+      const c = Number(parts[2])
       sliced = isSliced2D(r, c)
-      currentVal = baseData2D.value[r][c]
+      currentVal = baseData2D.value[r]?.[c] ?? 0
     } else {
-      const [, d, r, c] = entry.key.split('_').map(Number)
+      const parts = entry.key.split('_')
+      if (parts[0] !== '3D') return
+      const d = Number(parts[1])
+      const r = Number(parts[2])
+      const c = Number(parts[3])
       sliced = isSliced3D(d, r, c)
-      currentVal = baseData3D.value[d][r][c]
+      currentVal = baseData3D.value[d]?.[r]?.[c] ?? 0
     }
 
     entry.isSliced = sliced
@@ -515,8 +536,8 @@ const mutateSlice = () => {
   emitInspection()
 }
 
-// Reset array values
-const resetValues = () => {
+// Reset data structures without triggering prematurely typed visuals
+const resetBaseData = () => {
   isMutated.value = false
   mutationMessage.value = null
 
@@ -539,24 +560,42 @@ const resetValues = () => {
       [15, 16, 17]
     ]
   ]
+}
 
+// Reset array values action
+const resetValues = () => {
+  resetBaseData()
   updateVisuals()
   emitInspection()
+}
+
+const resetCameraForDim = (dim: DimensionMode) => {
+  if (!camera || !controls) return
+  if (dim === '1D') {
+    camera.position.set(0, 0.8, 9.5)
+    controls.target.set(0, 0, 0)
+  } else if (dim === '2D') {
+    camera.position.set(0, 0.9, 9.2)
+    controls.target.set(0, 0, 0)
+  } else {
+    // 3D: Front isometric perspective to clearly view depth sheets, rows, and columns
+    camera.position.set(2.4, 2.0, 8.8)
+    controls.target.set(0, 0, 0)
+  }
+  controls.update()
 }
 
 const switchDim = (dim: DimensionMode) => {
   currentDim.value = dim
-  resetValues()
+  resetBaseData()
   rebuildScene()
   updateVisuals()
+  resetCameraForDim(dim)
   emitInspection()
 }
 
 const resetCamera = () => {
-  if (!camera || !controls) return
-  camera.position.copy(initialCameraPos)
-  controls.target.copy(initialCameraTarget)
-  controls.update()
+  resetCameraForDim(currentDim.value)
 }
 
 const onPointerDown = (event: MouseEvent) => {
@@ -602,6 +641,12 @@ watch([s1D_start, s1D_stop, s1D_step, s2D_rStart, s2D_rStop, s2D_rStep, s2D_cSta
 watch(memoryMode, () => {
   updateVisuals()
   emitInspection()
+})
+
+watch(currentDim, (dim) => {
+  if (baseCubes.length > 0 && !baseCubes[0].key.startsWith(dim + '_')) {
+    switchDim(dim)
+  }
 })
 
 onMounted(() => {

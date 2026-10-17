@@ -16,7 +16,7 @@ useHead({
 })
 
 const searchQuery = ref('')
-const selectedPart = ref<'all' | 'numpy' | 'pandas' | 'statistics'>('all')
+const selectedPart = ref<'all' | 'numpy' | 'pandas' | 'preprocessing' | 'statistics'>('all')
 
 // Filtered topics
 const filteredTopics = computed(() => {
@@ -103,7 +103,7 @@ const clearSearch = () => {
               class="px-3 py-1.5 rounded transition-colors whitespace-nowrap"
               :class="selectedPart === 'all' ? 'bg-brand-blue text-white font-semibold shadow-xs' : 'text-muted hover:text-ink'"
             >
-              All (18)
+              All ({{ ANALYTICS_TOPICS.length }})
             </button>
             <button
               type="button"
@@ -111,7 +111,7 @@ const clearSearch = () => {
               class="px-3 py-1.5 rounded transition-colors whitespace-nowrap"
               :class="selectedPart === 'numpy' ? 'bg-brand-blue text-white font-semibold shadow-xs' : 'text-muted hover:text-ink'"
             >
-              NumPy (01–06)
+              NumPy
             </button>
             <button
               type="button"
@@ -119,7 +119,15 @@ const clearSearch = () => {
               class="px-3 py-1.5 rounded transition-colors whitespace-nowrap"
               :class="selectedPart === 'pandas' ? 'bg-brand-purple text-white font-semibold shadow-xs' : 'text-muted hover:text-ink'"
             >
-              Pandas (07–13)
+              Pandas
+            </button>
+            <button
+              type="button"
+              @click="selectedPart = 'preprocessing'"
+              class="px-3 py-1.5 rounded transition-colors whitespace-nowrap"
+              :class="selectedPart === 'preprocessing' ? 'bg-emerald-600 text-white font-semibold shadow-xs' : 'text-muted hover:text-ink'"
+            >
+              Preprocessing
             </button>
             <button
               type="button"
@@ -127,7 +135,7 @@ const clearSearch = () => {
               class="px-3 py-1.5 rounded transition-colors whitespace-nowrap"
               :class="selectedPart === 'statistics' ? 'bg-brand-amber text-white font-semibold shadow-xs' : 'text-muted hover:text-ink'"
             >
-              Statistics (14–18)
+              Statistics
             </button>
           </div>
         </div>

@@ -43,6 +43,26 @@
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-mono: Consolas, "SF Mono", Menlo, Monaco, "Roboto Mono", monospace;
 }
+/* Jupyter DataFrame table styles */
+.dataframe {
+  border: 1px solid var(--line);
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  margin: 1rem 0;
+}
+.dataframe th,
+.dataframe td {
+  border: 1px solid var(--line);
+  padding: 0.4rem 0.6rem;
+}
+.dataframe th {
+  background: var(--card-subtle);
+  font-weight: 600;
+}
+.dataframe .nan {
+  color: var(--muted);
+  font-style: italic;
+}
 
 [data-theme="dark"] {
   --bg: #12161d;
