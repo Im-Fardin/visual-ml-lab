@@ -35,6 +35,10 @@ import Stage22ConditionalSelection from '~/components/analytics/stages/Stage22Co
 import Stage23ApplyAxis from '~/components/analytics/stages/Stage23ApplyAxis.vue'
 import Stage27PivotTableCrosstab from '~/components/analytics/stages/Stage27PivotTableCrosstab.vue'
 import Stage28MeltWideToLong from '~/components/analytics/stages/Stage28MeltWideToLong.vue'
+import Stage29HistogramKde from '~/components/analytics/stages/Stage29HistogramKde.vue'
+import Stage30CentralTendencySkewness from '~/components/analytics/stages/Stage30CentralTendencySkewness.vue'
+import Stage29FeatureScaling from '~/components/analytics/stages/Stage29FeatureScaling.vue'
+import Stage30CategoricalEncoding from '~/components/analytics/stages/Stage30CategoricalEncoding.vue'
 import Stage29StackUnstackMultiIndex from '~/components/analytics/stages/Stage29StackUnstackMultiIndex.vue'
 import Stage30TimeSeriesResample from '~/components/analytics/stages/Stage30TimeSeriesResample.vue'
 import Stage31RollingWindow from '~/components/analytics/stages/Stage31RollingWindow.vue'
@@ -135,10 +139,16 @@ const stageComponent = computed(() => {
       return Stage27PivotTableCrosstab
     case 'Stage28MeltWideToLong':
       return Stage28MeltWideToLong
+    case 'Stage29HistogramKde':
+      return Stage29HistogramKde
+    case 'Stage30CentralTendencySkewness':
+      return Stage30CentralTendencySkewness
+    case 'Stage29FeatureScaling':
     case 'Stage29StackUnstackMultiIndex':
-      return Stage29StackUnstackMultiIndex
+      return Stage29FeatureScaling
+    case 'Stage30CategoricalEncoding':
     case 'Stage30TimeSeriesResample':
-      return Stage30TimeSeriesResample
+      return Stage30CategoricalEncoding
     case 'Stage31RollingWindow':
       return Stage31RollingWindow
     case 'Stage32MemoryCategorical':

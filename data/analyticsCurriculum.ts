@@ -1110,7 +1110,7 @@ print("Pivot Table:\\n", pivot)`,
   {
     id: '28',
     slug: 'melt-wide-to-long',
-    aliases: ['28_melt_wide_to_long'],
+    aliases: ['28_melt_wide_to_long', 'handle-missing-values'],
     partId: 'pandas',
     partTitle: 'Part 2: Pandas Tabular Processing',
     moduleNumber: 13,
@@ -1146,74 +1146,77 @@ print("Melted Long DataFrame:\\n", long_df)`,
   },
   {
     id: '29',
-    slug: 'stack-unstack-multiindex',
-    aliases: ['29_stack_unstack_multiindex'],
-    partId: 'pandas',
-    partTitle: 'Part 2: Pandas Tabular Processing',
-    moduleNumber: 13,
-    moduleTitle: 'Reshaping & Hierarchical Indexing',
-    title: '29 • stack & unstack: Hierarchical MultiIndex Rotations',
-    shortDesc: 'Pivoting levels between the row index and column index in hierarchical multi-level tables.',
-    tags: ['Pandas', 'MultiIndex', 'stack', 'unstack', 'Hierarchical', 'Level Rotation'],
-    invariant: 'stack(): moves column level to innermost row index • unstack(): moves row level to column headers',
-    shapeFormula: 'stack(level) -> MultiIndex Rows • unstack(level) -> MultiIndex Columns',
+    slug: 'histogram-kde',
+    aliases: ['29_histogram_kde', 'feature-scaling', 'stack-unstack-multiindex'],
+    partId: 'statistics',
+    partTitle: 'Part 4: Statistics & Distributions',
+    moduleNumber: 3,
+    moduleTitle: 'Visual Statistics & Distributions',
+    title: '29 • Histogram vs. KDE: Discrete Bins vs. Continuous Kernel Density Estimation',
+    shortDesc: 'Contrasting discrete histogram binning artifacts against smooth Gaussian Kernel Density Estimation (KDE) and bandwidth parameter sensitivity.',
+    tags: ['Statistics', 'Histogram', 'KDE', 'Gaussian Kernel', 'Bandwidth', 'Probability Density'],
+    invariant: 'Discrete bins suffer boundary artifacts; Gaussian KDE integrates to 1.0 (∫ f̂(x) dx ≈ 1.0)',
+    shapeFormula: 'f̂(x) = (1 / nh) Σ K((x - x_i) / h) -> Continuous Probability Density',
     theory: {
-      title: 'Hierarchical Level Transposition',
-      concept: 'stack() pushes a level from column headers downward into the row MultiIndex, increasing row depth and narrowing table width. unstack() does the exact opposite: it lifts an inner row MultiIndex level up into the column headers, widening the table.',
-      practicalInsight: 'MultiIndex levels provide a powerful mechanism to represent N-dimensional hypercubes within a 2D tabular structure without losing relational metadata.'
+      title: 'Kernel Density Estimation & Bandwidth Invariants',
+      concept: 'Histograms quantize continuous data into arbitrary discrete bins, making the perceived shape heavily dependent on bin width and origin. Kernel Density Estimation (KDE) centers a smooth Gaussian bell curve (kernel) atop each individual observation. Summing and normalizing these kernels yields a continuous, non-parametric probability density function. The bandwidth h acts as a smoothing scale: small h causes overfitting (spiky noise), while large h over-smooths bimodal features into an unimodal blob.',
+      practicalInsight: 'Always verify multimodal features with KDE using Scott or Silverman bandwidth heuristics (h ≈ 1.06 · σ · n^(-1/5)) before assuming normality in feature engineering pipelines.'
     },
-    pythonCode: `import pandas as pd
+    pythonCode: `import numpy as np
+from sklearn.neighbors import KernelDensity
 
-# MultiIndex columns
-cols = pd.MultiIndex.from_tuples([
-    ('2023', 'Revenue'), ('2023', 'Profit'),
-    ('2024', 'Revenue'), ('2024', 'Profit')
-], names=['Year', 'Metric'])
+# Bimodal sample data (N=40)
+X = np.array([
+    18, 20, 21, 22, 23, 23, 24, 25, 25, 25, 26, 26, 27, 28, 29, 30, 31, 32, 34, 36,
+    54, 56, 58, 60, 61, 62, 63, 64, 65, 65, 66, 66, 67, 68, 69, 70, 72, 74, 76, 78
+]).reshape(-1, 1)
 
-df = pd.DataFrame([[100, 20, 130, 28], [80, 15, 95, 22]], index=['US', 'EU'], columns=cols)
-print("Original MultiIndex Columns:\\n", df)
+# Fit Gaussian KDE with bandwidth h=5.5
+kde = KernelDensity(bandwidth=5.5, kernel='gaussian')
+kde.fit(X)
 
-# Stack year column level into rows
-stacked = df.stack(level='Year')
-print("\\nAfter df.stack(level='Year'):\\n", stacked)
+# Evaluate log-density across domain [0, 100]
+x_grid = np.linspace(0, 100, 200).reshape(-1, 1)
+log_density = kde.score_samples(x_grid)
+density = np.exp(log_density)
 
-# Unstack back to wide matrix
-unstacked = stacked.unstack(level='Year')
-print("\\nAfter df.unstack(level='Year'):\\n", unstacked)`,
-    componentName: 'Stage29StackUnstackMultiIndex'
+print("KDE Peak Density:", round(float(np.max(density)), 4))
+print("Integrated Area:", round(float(np.trapz(density, x_grid.ravel())), 3))`,
+    componentName: 'Stage29HistogramKde'
   },
   {
     id: '30',
-    slug: 'time-series-resample',
-    aliases: ['30_time_series_resample'],
-    partId: 'pandas',
-    partTitle: 'Part 2: Pandas Tabular Processing',
-    moduleNumber: 14,
-    moduleTitle: 'Time-Series & Window Analytics',
-    title: '30 • Time-Series: DatetimeIndex Resampling & Gap Filling',
-    shortDesc: 'Frequency conversion on DatetimeIndex: Downsampling with aggregate reductions vs Upsampling with forward-fill interpolation.',
-    tags: ['Pandas', 'resample', 'DatetimeIndex', 'Downsampling', 'Upsampling', 'ffill', 'Time Series'],
-    invariant: 'Downsample: Groups timestamps into frequency intervals • Upsample: Expands time grid and fills NaNs',
-    shapeFormula: 'df.resample(rule).agg() -> Resampled DataFrame',
+    slug: 'central-tendency-skewness',
+    aliases: ['30_central_tendency_skewness', 'categorical-encoding', 'time-series-resample'],
+    partId: 'statistics',
+    partTitle: 'Part 4: Statistics & Distributions',
+    moduleNumber: 3,
+    moduleTitle: 'Visual Statistics & Distributions',
+    title: '30 • Central Tendency: Mean, Median, Mode & The Impact of Skewness / Outliers',
+    shortDesc: 'Visualizing Mode as the density peak, Median as the 50/50 area bisector, and Mean as the center of mass vulnerable to outlier gravity.',
+    tags: ['Statistics', 'Central Tendency', 'Mean', 'Median', 'Mode', 'Skewness', 'Outliers'],
+    invariant: 'Mode = argmax f(x) • Median bisects area ∫ f(x)dx = 0.5 • Mean μ = ∫ x·f(x)dx pulled by outliers',
+    shapeFormula: 'Right-Skewed: Mode < Median < Mean • Left-Skewed: Mean < Median < Mode',
     theory: {
-      title: 'Temporal Resampling & Frequency Mechanics',
-      concept: 'resample() is essentially a time-aware groupby operating on a DatetimeIndex. Downsampling collapses high-frequency timestamps into coarser intervals (e.g., Daily to Weekly) using aggregation. Upsampling increases temporal resolution (e.g., Daily to 12-Hour), introducing gap intervals requiring forward-fill (ffill), backfill (bfill), or linear interpolation.',
-      practicalInsight: 'Temporal alignment requires strict avoidance of lookahead bias in machine learning pipelines: when upsampling feature streams, always use ffill() rather than bfill() or future-looking interpolations to prevent data leakage.'
+      title: 'Central Tendency Topology & Skewness Invariants',
+      concept: 'Mode represents the most frequent value or global peak of the density curve. Median splits the distribution into two equal 50% probability areas, making it resilient to extreme outliers. Mean represents the gravitational center of mass (expected value); extreme values exert leverage, pulling the mean deep into the long tail. In right-skewed data, Mode < Median < Mean. In left-skewed data, Mean < Median < Mode.',
+      practicalInsight: 'When reporting central metrics for skewed features (e.g., household incomes, transaction values, web latency), always report the Median alongside the IQR rather than the Mean and standard deviation, as the Mean creates a misleading representation of the typical sample.'
     },
-    pythonCode: `import pandas as pd
-import numpy as np
+    pythonCode: `import numpy as np
+from scipy import stats
 
-dates = pd.date_range('2024-01-01', periods=7, freq='D')
-df = pd.DataFrame({'power_kw': [42.5, 48.0, 39.2, 55.8, 62.1, 51.4, 46.7]}, index=dates)
+# Right-skewed distribution sample
+data = np.random.exponential(scale=20, size=500) + 10
 
-# 1. Downsampling to 3-day mean bins
-downsampled = df.resample('3D').mean()
-print("3-Day Downsampled Mean:\\n", downsampled)
+# Calculate central tendency metrics
+mean_val = np.mean(data)
+median_val = np.median(data)
+mode_val = float(stats.mode(np.round(data, 0), keepdims=False).mode)
+skewness = stats.skew(data)
 
-# 2. Upsampling to 12-hour frequency with forward-fill
-upsampled = df.iloc[:3].resample('12h').ffill()
-print("\\n12-Hour Upsampled with ffill():\\n", upsampled)`,
-    componentName: 'Stage30TimeSeriesResample'
+print(f"Mode: {mode_val:.1f} | Median: {median_val:.1f} | Mean: {mean_val:.1f}")
+print(f"Fisher-Pearson Skewness: {skewness:.2f} (Positive = Right-Skewed)")`,
+    componentName: 'Stage30CentralTendencySkewness'
   },
   {
     id: '31',
