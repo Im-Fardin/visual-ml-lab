@@ -170,8 +170,8 @@ const cltAssessment = computed(() => {
 
 // --- SVG Coordinate Geometry ------------------------------------------------
 const svgWidth = 800
-const svgHeight = 500
-const margin = { top: 30, right: 40, bottom: 65, left: 60 }
+const svgHeight = 420
+const margin = { top: 18, right: 24, bottom: 42, left: 35 }
 const plotWidth = svgWidth - margin.left - margin.right
 
 // Domain is [0, 100]
@@ -183,8 +183,8 @@ const xScale = (val: number): number => {
   return margin.left + ((val - xMin) / xRange) * plotWidth
 }
 
-// Top Zone: Parent Population Preview (y: 35 to 135, height 100)
-const topZone = { top: 35, height: 95 }
+// Top Zone: Parent Population Preview (y: 22 to 102, height 80)
+const topZone = { top: 22, height: 80 }
 
 // Top Population Curve preview (sampled at 80 points)
 const topPopulationCurvePath = computed(() => {
@@ -220,8 +220,8 @@ const topPopulationCurvePath = computed(() => {
   return d
 })
 
-// Bottom Zone: Sampling Distribution Histogram (y: 175 to 435, height 260)
-const bottomZone = { top: 175, height: 260, baseline: 435 }
+// Bottom Zone: Sampling Distribution Histogram (y: 135 to 375, height 240)
+const bottomZone = { top: 135, height: 240, baseline: 375 }
 
 // Histogram computation: 30 bins across [0, 100]
 const NUM_BINS = 30
@@ -456,10 +456,10 @@ onMounted(() => {
       </div>
 
       <!-- Chart Container: Fully visible, responsive, zero clipping -->
-      <div class="w-full flex items-center justify-center py-1 px-1 sm:px-2">
-        <div class="w-full max-w-3xl aspect-[16/10] max-h-[220px] sm:max-h-[240px] md:max-h-[260px] relative flex items-center justify-center">
+      <div class="w-full flex-1 flex items-center justify-center py-1">
+        <div class="w-full aspect-[2/1] sm:aspect-[2.2/1] max-h-[300px] sm:max-h-[320px] md:max-h-[340px] relative flex items-center justify-center">
           <svg
-            viewBox="0 0 800 500"
+            viewBox="0 0 800 420"
             preserveAspectRatio="xMidYMid meet"
             class="w-full h-full block"
           >
@@ -568,7 +568,7 @@ onMounted(() => {
               />
               <text
                 :x="xScale(tick)"
-                :y="bottomZone.baseline + 20"
+                :y="bottomZone.baseline + 18"
                 text-anchor="middle"
                 font-family="monospace"
                 font-size="10"
@@ -581,10 +581,10 @@ onMounted(() => {
 
             <text
               :x="svgWidth / 2"
-              :y="svgHeight - 12"
+              :y="svgHeight - 8"
               text-anchor="middle"
               font-family="monospace"
-              font-size="11"
+              font-size="10.5"
               fill="currentColor"
               class="text-muted font-bold"
             >

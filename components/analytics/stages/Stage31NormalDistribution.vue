@@ -37,11 +37,11 @@ const activeZone = ref<ShadingMode>('all')
 
 // --- SVG ViewBox Geometry ---------------------------------------------------
 const svgWidth = 800
-const svgHeight = 500
-const margin = { top: 40, right: 40, bottom: 70, left: 60 }
+const svgHeight = 400
+const margin = { top: 18, right: 24, bottom: 44, left: 45 }
 const plotWidth = svgWidth - margin.left - margin.right
 const plotHeight = svgHeight - margin.top - margin.bottom
-const baselineY = svgHeight - margin.bottom // 430
+const baselineY = svgHeight - margin.bottom // 356
 
 // Fixed Global Display Domain: X in [-70, +70]
 const xMin = -70
@@ -394,10 +394,10 @@ onMounted(() => {
       </div>
 
       <!-- Chart Container: Fully visible, responsive, zero clipping -->
-      <div class="w-full flex items-center justify-center py-1 px-1 sm:px-2">
-        <div class="w-full max-w-3xl aspect-[16/10] max-h-[220px] sm:max-h-[240px] md:max-h-[260px] relative flex items-center justify-center">
+      <div class="w-full flex-1 flex items-center justify-center py-1">
+        <div class="w-full aspect-[2/1] sm:aspect-[2.2/1] max-h-[300px] sm:max-h-[320px] md:max-h-[340px] relative flex items-center justify-center">
           <svg
-            viewBox="0 0 800 500"
+            viewBox="0 0 800 400"
             preserveAspectRatio="xMidYMid meet"
             class="w-full h-full block"
           >
@@ -414,7 +414,7 @@ onMounted(() => {
                 class="text-line/60"
               />
               <text
-                :x="margin.left - 10"
+                :x="margin.left - 6"
                 :y="yScale(yt) + 3.5"
                 text-anchor="end"
                 font-family="monospace"
@@ -474,7 +474,7 @@ onMounted(() => {
 
             <text
               :x="svgWidth / 2"
-              :y="svgHeight - 12"
+              :y="svgHeight - 8"
               text-anchor="middle"
               font-family="monospace"
               font-size="11"

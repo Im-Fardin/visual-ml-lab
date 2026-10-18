@@ -33,8 +33,8 @@ const showAreaHalves = ref<boolean>(false)
 
 // SVG ViewBox Geometry
 const svgWidth = 800
-const svgHeight = 500
-const margin = { top: 40, right: 40, bottom: 70, left: 60 }
+const svgHeight = 400
+const margin = { top: 18, right: 24, bottom: 44, left: 35 }
 const plotWidth = svgWidth - margin.left - margin.right
 const plotHeight = svgHeight - margin.top - margin.bottom
 
@@ -351,10 +351,10 @@ onMounted(() => {
       </div>
 
       <!-- Chart Container: Fully visible, responsive, zero clipping -->
-      <div class="w-full flex-1 flex items-center justify-center py-1 px-1 sm:px-2">
-        <div class="w-full max-w-3xl aspect-[16/10] max-h-[220px] sm:max-h-[240px] md:max-h-[260px] relative flex items-center justify-center">
+      <div class="w-full flex-1 flex items-center justify-center py-1">
+        <div class="w-full aspect-[2/1] sm:aspect-[2.2/1] max-h-[300px] sm:max-h-[320px] md:max-h-[340px] relative flex items-center justify-center">
           <svg 
-            viewBox="0 0 800 500" 
+            viewBox="0 0 800 400" 
             preserveAspectRatio="xMidYMid meet"
             class="w-full h-full block"
           >
@@ -382,10 +382,10 @@ onMounted(() => {
             />
             <text
               :x="xScale(tick)"
-              :y="margin.top + plotHeight + 20"
+              :y="margin.top + plotHeight + 18"
               text-anchor="middle"
               font-family="monospace"
-              font-size="10.5"
+              font-size="10"
               fill="currentColor"
               class="text-muted font-bold"
             >
@@ -394,10 +394,10 @@ onMounted(() => {
           </g>
           <text
             :x="svgWidth / 2"
-            :y="svgHeight - 12"
+            :y="svgHeight - 8"
             text-anchor="middle"
             font-family="monospace"
-            font-size="11"
+            font-size="10.5"
             fill="currentColor"
             class="text-muted font-bold"
           >
