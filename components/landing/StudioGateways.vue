@@ -24,11 +24,11 @@ const studios = [
     btnClass: 'bg-brand-blue hover:bg-brand-blue-hover text-white',
     icon: Binary,
     features: [
+      'Stage 36: Manual Regression & Loss Geometry (Live)',
       'Linear & Polynomial SVM with Margin Bounds',
       'Logistic Regression with Decision Contours',
       'Interactive Decision Trees & Entropy Splitting',
-      'K-Means Clustering with Centroid Convergence',
-      'Principal Component Analysis (PCA) Projection'
+      'K-Means Clustering with Centroid Convergence'
     ]
   },
   {

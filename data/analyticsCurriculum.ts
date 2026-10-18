@@ -2,8 +2,10 @@ export interface AnalyticsTopic {
   id: string
   slug: string
   aliases?: string[]
-  partId: 'numpy' | 'pandas' | 'preprocessing' | 'statistics'
+  partId: 'numpy' | 'pandas' | 'preprocessing' | 'statistics' | 'machine-learning' | 'ml'
   partTitle: string
+  track?: 'data-analysis' | 'machine-learning' | 'deep-learning'
+  category?: 'data-analysis' | 'machine-learning' | 'deep-learning'
   moduleNumber: number
   moduleTitle: string
   title: string
@@ -18,13 +20,15 @@ export interface AnalyticsTopic {
   }
   pythonCode: string
   componentName: string
+  component?: string
 }
 
 export interface AnalyticsPart {
-  id: 'numpy' | 'pandas' | 'preprocessing' | 'statistics'
+  id: 'numpy' | 'pandas' | 'preprocessing' | 'statistics' | 'machine-learning' | 'ml'
   title: string
   desc: string
   color: string
+  track?: 'data-analysis' | 'machine-learning' | 'deep-learning'
 }
 
 export const ANALYTICS_PARTS: AnalyticsPart[] = [
@@ -32,25 +36,36 @@ export const ANALYTICS_PARTS: AnalyticsPart[] = [
     id: 'numpy',
     title: 'Part 1: NumPy Foundations',
     desc: 'Vectorized computing, memory strides, and multidimensional tensor mechanics.',
-    color: 'brand-blue'
+    color: 'brand-blue',
+    track: 'data-analysis'
   },
   {
     id: 'pandas',
     title: 'Part 2: Pandas Tabular Processing',
     desc: 'DataFrame indexing, relational joins, hierarchical grouping, and data cleaning.',
-    color: 'brand-purple'
+    color: 'brand-purple',
+    track: 'data-analysis'
   },
   {
     id: 'preprocessing',
     title: 'Part 3: Feature Engineering & Preprocessing',
     desc: 'Feature scaling, categorical encoding, and leakage-free dataset partitioning.',
-    color: 'brand-emerald'
+    color: 'brand-emerald',
+    track: 'data-analysis'
   },
   {
     id: 'statistics',
     title: 'Part 4: Statistics & Distributions',
     desc: 'Probability densities, central tendency, outlier fences, and correlations.',
-    color: 'brand-amber'
+    color: 'brand-amber',
+    track: 'data-analysis'
+  },
+  {
+    id: 'machine-learning',
+    title: 'Machine Learning',
+    desc: 'Empirical loss minimization, gradient descent dynamics, linear modeling, and supervised training engines.',
+    color: 'brand-blue',
+    track: 'machine-learning'
   }
 ]
 
@@ -1429,40 +1444,45 @@ else:
     componentName: 'Stage35HypothesisTesting'
   },
   {
-    id: '36',
-    slug: 'categorical-encoding',
-    aliases: ['36_categorical_encoding'],
-    partId: 'preprocessing',
-    partTitle: 'Part 3: Feature Engineering & Preprocessing',
-    moduleNumber: 17,
-    moduleTitle: 'Categorical Transformations',
-    title: '36 • Categorical Encoding: Ordinal vs. One-Hot & The Dummy Variable Trap',
-    shortDesc: 'Converting qualitative attributes into numerical arrays, understanding orthogonal basis vectors, and dropping baseline dummies.',
-    tags: ['Preprocessing', 'OneHotEncoder', 'OrdinalEncoder', 'Dummy Variable Trap', 'Multicollinearity', 'get_dummies'],
-    invariant: 'Ordinal implies monotonic order (A < B < C) • One-Hot creates orthogonal basis vectors • drop="first" prevents singular design matrices',
-    shapeFormula: 'OneHot(K categories, drop=None) -> (N, K) • OneHot(drop="first") -> (N, K-1)',
+    id: 'manual-regression',
+    slug: 'manual-regression',
+    aliases: ['36', '36_manual_regression', 'manual-regression', '36_categorical_encoding', 'categorical-encoding'],
+    partId: 'machine-learning',
+    partTitle: 'Machine Learning',
+    track: 'machine-learning',
+    category: 'machine-learning',
+    moduleNumber: 1,
+    moduleTitle: 'ML Foundations & Training Engine',
+    title: '36 • Manual Regression: Loss Surface, Error Squares & The Geometry of OLS',
+    shortDesc: 'Interactive manual parameter exploration (w, b), visualizing geometric squared error areas, centroid pivot invariants, and analytical OLS minimums.',
+    tags: ['Machine Learning', 'Linear Regression', 'OLS', 'Loss Function', 'MSE', 'Residuals', 'Convex Optimization'],
+    invariant: 'L(w, b) = (1/N)·Σ(yᵢ - (wxᵢ + b))² is strictly convex • OLS line must pass through centroid (X̄, Ȳ) • Global minimum at w*, b*',
+    shapeFormula: 'ŷ = wx + b • MSE = (1/N)·Σ eᵢ² • w* = Cov(X,Y)/Var(X) • b* = Ȳ - w*X̄',
     theory: {
-      title: 'Categorical Vector Spaces & Multicollinearity',
-      concept: 'Machine learning models require numerical matrices. Ordinal encoding maps qualitative categories to integer ranks, which is mathematically sound ONLY when an intrinsic hierarchy exists (Bronze < Silver < Gold). For nominal variables (Paris, Tokyo, London), ordinal encoding introduces artificial false distance relationships. One-Hot encoding expands nominal categories into K orthogonal binary basis vectors. When a model includes a bias intercept, the K columns sum to 1, causing perfect multicollinearity (The Dummy Variable Trap); dropping the first column (drop="first") restores full rank without information loss.',
-      practicalInsight: 'Tree-based models (Random Forests, LightGBM) can handle high-cardinality ordinal encodings without ill effects, whereas linear models and neural networks require One-Hot or Target encoding to avoid imposing artificial geometric topology.'
+      title: 'Loss Surfaces, Error Squares & The Geometry of Linear Fit',
+      concept: 'Supervised machine learning seeks model parameters that minimize an empirical loss function. For simple linear regression ŷ = wx + b, Mean Squared Error (MSE) penalizes vertical residuals e_i = y_i - ŷ_i quadratically. When visualized geometrically, each error manifests as a physical square of area e_i²; OLS finds the unique hyperplane that minimizes the total sum of these geometric areas. Because the MSE loss surface is a strictly convex parabolic bowl in (w, b) space, it possesses a single unique global minimum given analytically by the Normal Equation without local minima traps.',
+      practicalInsight: 'The regression line is mathematically forced to pass through the dataset centroid (X̄, Ȳ). Tuning slope w rotates the line around the centroid, while tuning bias b shifts the vertical baseline. Visualizing error squares exposes why L2 loss is heavily distorted by extreme outliers compared to L1 (Mean Absolute Error).'
     },
-    pythonCode: `import pandas as pd
-from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
+    pythonCode: `import numpy as np
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import mean_squared_error, r2_score
 
-df = pd.DataFrame({
-    'Tier': ['Bronze', 'Silver', 'Gold', 'Platinum'],
-    'City': ['London', 'Paris', 'Tokyo', 'Paris']
-})
+# Sample dataset
+X = np.array([1.5, 2.2, 3.0, 3.8, 4.5, 5.2, 6.0, 6.8, 7.5, 8.2, 9.0, 9.6]).reshape(-1, 1)
+y = np.array([44.0, 51.5, 55.0, 61.0, 64.5, 70.0, 76.5, 79.0, 84.0, 88.5, 94.0, 97.0])
 
-# 1. Ordinal Encoding for hierarchical data
-ord_enc = OrdinalEncoder(categories=[['Bronze', 'Silver', 'Gold', 'Platinum']])
-df['Tier_Rank'] = ord_enc.fit_transform(df[['Tier']])
+# 1. Fit Analytical OLS
+model = LinearRegression(fit_intercept=True)
+model.fit(X, y)
 
-# 2. One-Hot with drop='first' to prevent Dummy Variable Trap
-ohe = OneHotEncoder(drop='first', sparse_output=False)
-city_encoded = ohe.fit_transform(df[['City']])
-print("One-Hot (drop='first', K-1 columns):\\n", city_encoded)`,
-    componentName: 'Stage36CategoricalEncoding'
+w_opt = model.coef_[0]
+b_opt = model.intercept_
+y_hat = model.predict(X)
+
+print(f"Optimal Model: y = {w_opt:.3f}x + {b_opt:.2f}")
+print(f"Minimum MSE: {mean_squared_error(y, y_hat):.3f} | R² Score: {r2_score(y, y_hat):.3f}")`,
+    component: 'Stage36ManualRegression',
+    componentName: 'Stage36ManualRegression'
   },
   {
     id: '37',

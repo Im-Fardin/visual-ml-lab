@@ -30,6 +30,13 @@ const partColorClass = computed(() => {
         text: 'text-brand-amber',
         btn: 'bg-brand-amber hover:bg-brand-amber-hover text-white'
       }
+    case 'machine-learning':
+    case 'ml':
+      return {
+        badge: 'bg-brand-blue-soft text-brand-blue border-brand-blue/20',
+        text: 'text-brand-blue',
+        btn: 'bg-brand-blue hover:bg-brand-blue-hover text-white'
+      }
     default:
       return {
         badge: 'bg-card-subtle text-muted border-line',
@@ -68,7 +75,7 @@ const partColorClass = computed(() => {
             <Clock class="w-3 h-3" /> Preview
           </span>
           <span class="font-mono text-xs font-bold text-muted">
-            #{{ topic.id }}
+            #{{ topic.id === 'manual-regression' ? '36' : topic.id }}
           </span>
         </div>
       </div>

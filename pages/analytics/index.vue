@@ -16,13 +16,17 @@ useHead({
 })
 
 const searchQuery = ref('')
-const selectedPart = ref<'all' | 'numpy' | 'pandas' | 'preprocessing' | 'statistics'>('all')
+const selectedPart = ref<'all' | 'numpy' | 'pandas' | 'preprocessing' | 'statistics' | 'machine-learning' | 'ml'>('all')
 
 // Filtered topics
 const filteredTopics = computed(() => {
   const query = searchQuery.value.trim().toLowerCase()
   return ANALYTICS_TOPICS.filter((topic) => {
-    const matchesPart = selectedPart.value === 'all' || topic.partId === selectedPart.value
+    const matchesPart =
+      selectedPart.value === 'all' ||
+      topic.partId === selectedPart.value ||
+      (selectedPart.value === 'machine-learning' && (topic.partId === 'ml' || topic.partId === 'machine-learning' || topic.track === 'machine-learning')) ||
+      (selectedPart.value === 'ml' && (topic.partId === 'ml' || topic.partId === 'machine-learning' || topic.track === 'machine-learning'))
     if (!matchesPart) return false
 
     if (!query) return true
@@ -137,6 +141,14 @@ const clearSearch = () => {
             >
               Statistics
             </button>
+            <button
+              type="button"
+              @click="selectedPart = 'machine-learning'"
+              class="px-3 py-1.5 rounded transition-colors whitespace-nowrap"
+              :class="selectedPart === 'machine-learning' ? 'bg-brand-blue text-white font-semibold shadow-xs' : 'text-muted hover:text-ink'"
+            >
+              Machine Learning
+            </button>
           </div>
         </div>
       </div>
@@ -178,7 +190,10 @@ const clearSearch = () => {
           <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-line pb-3 gap-2">
             <div>
               <h2 class="text-xl font-bold text-ink flex items-center gap-2">
-                <span class="w-2.5 h-2.5 rounded-full" :class="group.part.id === 'numpy' ? 'bg-brand-blue' : group.part.id === 'pandas' ? 'bg-brand-purple' : 'bg-brand-amber'" />
+                <span
+                  class="w-2.5 h-2.5 rounded-full"
+                  :class="group.part.id === 'numpy' ? 'bg-brand-blue' : group.part.id === 'pandas' ? 'bg-brand-purple' : group.part.id === 'preprocessing' ? 'bg-emerald-600' : group.part.id === 'machine-learning' || group.part.id === 'ml' ? 'bg-brand-blue' : 'bg-brand-amber'"
+                />
                 {{ group.part.title }}
               </h2>
               <p class="text-xs text-muted mt-0.5">

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ArrowLeft, Binary, Clock, CheckCircle2 } from 'lucide-vue-next'
+import { ArrowLeft, Binary, Clock, CheckCircle2, Sparkles, ArrowRight } from 'lucide-vue-next'
 
 useHead({
   title: 'Classic ML Studio — ML & Data Visualizer'
@@ -32,21 +32,56 @@ const upcomingAlgorithms = [
             <Binary class="w-6 h-6" />
           </div>
           <div>
-            <span class="text-xs font-mono uppercase tracking-wider text-muted">Studio Phase 01</span>
+            <span class="text-xs font-mono uppercase tracking-wider text-muted">Track 02 • Machine Learning</span>
             <h1 class="text-2xl sm:text-3xl font-extrabold text-ink">
-              ML Studio: Coming Soon
+              Machine Learning Studio
             </h1>
           </div>
         </div>
 
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono bg-brand-amber-soft text-brand-amber border border-brand-amber/20">
-          <Clock class="w-3.5 h-3.5" /> Under Construction
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono bg-brand-blue-soft text-brand-blue border border-brand-blue/20">
+          <Sparkles class="w-3.5 h-3.5" /> Stage 36 Live
         </span>
       </div>
 
       <p class="text-base text-muted leading-relaxed">
-        The Classic Machine Learning Studio is being developed with zero-latency 2D Canvas visualizations for supervised and unsupervised algorithms. In the next phase, you will be able to place data points, tweak hyper-parameters, and step through training algorithms in real time.
+        The Classic Machine Learning Studio provides zero-latency 2D Canvas visualizations for supervised and unsupervised algorithms. Manipulate loss surfaces, tweak model weights, and step through mathematical training algorithms in real time.
       </p>
+
+      <!-- Active Live Stage 36 Card -->
+      <div class="rounded-xl border border-brand-blue/30 bg-brand-blue-soft/20 p-6 space-y-4">
+        <div class="flex items-center justify-between flex-wrap gap-2">
+          <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-mono font-medium bg-brand-blue text-white shadow-2xs">
+            <Sparkles class="w-3.5 h-3.5" /> Module 1: ML Foundations &amp; Training Engine
+          </div>
+          <span class="text-xs font-mono font-bold text-brand-blue">Stage #36</span>
+        </div>
+
+        <div>
+          <h2 class="text-lg sm:text-xl font-bold text-ink">
+            36 • Manual Regression: Loss Surface, Error Squares &amp; The Geometry of OLS
+          </h2>
+          <p class="text-xs sm:text-sm text-muted mt-1 leading-relaxed">
+            Interactive manual parameter exploration ($w, b$), visualizing geometric squared error areas, centroid pivot invariants, and analytical OLS minimums.
+          </p>
+        </div>
+
+        <div class="pt-1 flex items-center justify-between flex-wrap gap-3">
+          <div class="flex flex-wrap gap-1.5">
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-card border border-line text-muted">Linear Regression</span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-card border border-line text-muted">MSE Loss</span>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-card border border-line text-muted">Convex Optimization</span>
+          </div>
+
+          <NuxtLink
+            to="/analytics/manual-regression"
+            class="inline-flex items-center gap-2 px-4 py-2 rounded-md bg-brand-blue hover:bg-brand-blue-hover text-white text-xs font-mono font-bold transition-all shadow-sm"
+          >
+            <span>Launch Stage 36</span>
+            <ArrowRight class="w-4 h-4" />
+          </NuxtLink>
+        </div>
+      </div>
 
       <!-- Upcoming Algorithms List -->
       <div class="space-y-4 pt-4 border-t border-line">
