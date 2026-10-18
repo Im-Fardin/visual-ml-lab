@@ -41,6 +41,8 @@ import Stage29FeatureScaling from '~/components/analytics/stages/Stage29FeatureS
 import Stage30CategoricalEncoding from '~/components/analytics/stages/Stage30CategoricalEncoding.vue'
 import Stage29StackUnstackMultiIndex from '~/components/analytics/stages/Stage29StackUnstackMultiIndex.vue'
 import Stage30TimeSeriesResample from '~/components/analytics/stages/Stage30TimeSeriesResample.vue'
+import Stage31NormalDistribution from '~/components/analytics/stages/Stage31NormalDistribution.vue'
+import Stage32CentralLimitTheorem from '~/components/analytics/stages/Stage32CentralLimitTheorem.vue'
 import Stage31RollingWindow from '~/components/analytics/stages/Stage31RollingWindow.vue'
 import Stage32MemoryCategorical from '~/components/analytics/stages/Stage32MemoryCategorical.vue'
 import Stage33ChunkingLargeFiles from '~/components/analytics/stages/Stage33ChunkingLargeFiles.vue'
@@ -149,10 +151,12 @@ const stageComponent = computed(() => {
     case 'Stage30CategoricalEncoding':
     case 'Stage30TimeSeriesResample':
       return Stage30CategoricalEncoding
+    case 'Stage31NormalDistribution':
     case 'Stage31RollingWindow':
-      return Stage31RollingWindow
+      return Stage31NormalDistribution
+    case 'Stage32CentralLimitTheorem':
     case 'Stage32MemoryCategorical':
-      return Stage32MemoryCategorical
+      return Stage32CentralLimitTheorem
     case 'Stage33ChunkingLargeFiles':
       return Stage33ChunkingLargeFiles
     case 'Stage34RowVsColumnarParquet':

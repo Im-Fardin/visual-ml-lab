@@ -1220,69 +1220,91 @@ print(f"Fisher-Pearson Skewness: {skewness:.2f} (Positive = Right-Skewed)")`,
   },
   {
     id: '31',
-    slug: 'rolling-window',
-    aliases: ['31_rolling_window'],
-    partId: 'pandas',
-    partTitle: 'Part 2: Pandas Tabular Processing',
-    moduleNumber: 14,
-    moduleTitle: 'Time-Series & Window Analytics',
-    title: '31 • Rolling Windows: Moving Statistics & Min-Periods Constraints',
-    shortDesc: 'Sliding causal window brackets, moving mean/std calculations, initial NaN propagation, and min_periods relaxation.',
-    tags: ['Pandas', 'rolling', 'Moving Average', 'Window', 'min_periods', 'NaN'],
-    invariant: 'rolling(W) requires W preceding samples by default, yielding W-1 initial NaNs unless min_periods=1',
-    shapeFormula: 's.rolling(window=W, min_periods=P).mean() -> Smoothed Series',
+    slug: 'normal-distribution',
+    aliases: ['31_normal_distribution', 'normal-distribution', 'rolling-window'],
+    partId: 'statistics',
+    partTitle: 'Part 4: Statistics & Distributions',
+    moduleNumber: 3,
+    moduleTitle: 'Visual Statistics & Distributions',
+    title: '31 • Normal Distribution: The Gaussian Bell Curve & The 68–95–99.7 Empirical Rule',
+    shortDesc: 'Gaussian probability density function, mean (μ) and standard deviation (σ) parameter dynamics, and empirical standard deviation thresholds.',
+    tags: ['Statistics', 'Normal Distribution', 'Gaussian', 'Z-Score', 'Empirical Rule', 'Standard Deviation'],
+    invariant: 'Integral area is strictly 1.0 (∫ f(x)dx = 1.0) • 68.27% within ±1σ • 95.45% within ±2σ • 99.73% within ±3σ',
+    shapeFormula: 'f(x) = (1 / (σ√(2π))) · e^(-0.5 · ((x - μ) / σ)²)',
     theory: {
-      title: 'Sliding Window Invariants & Causal Smoothing',
-      concept: 'df.rolling(W) computes moving statistics over a sliding bracket of length W. Because operations are causal, early timesteps lack sufficient historical samples, producing W - 1 initial NaNs. Setting min_periods=1 relaxes this constraint, computing statistics immediately with whatever observations are currently available.',
-      practicalInsight: 'Rolling calculations serve as foundational feature engineering primitives for trend detection, volatility estimation, and algorithmic signal smoothing in quantitative trading.'
+      title: 'Gaussian Bell Geometry & The Empirical Rule',
+      concept: 'The Normal (Gaussian) distribution is uniquely defined by its mean μ (center of location) and standard deviation σ (dispersion/spread). The total probability area under the curve is mathematically conserved at exactly 1.0. As σ widens the curve, the peak density f(μ) drops inversely proportionally to preserve this invariant. Under the Empirical (68-95-99.7) Rule, approximately 68.3% of observations fall within ±1σ, 95.4% within ±2σ, and 99.7% within ±3σ.',
+      practicalInsight: 'Z-score standardization (Z = (x - μ) / σ) maps any Gaussian variable to the standard normal distribution N(0, 1), making diverse features directly comparable across machine learning models like SVMs and Logistic Regression.'
     },
-    pythonCode: `import pandas as pd
+    pythonCode: `import numpy as np
+from scipy import stats
 
-prices = pd.Series([100, 104, 102, 110, 108, 115, 120, 118])
+# Parameters: Mean = 0, Std Dev = 15
+mu, sigma = 0, 15
+dist = stats.norm(loc=mu, scale=sigma)
 
-# 1. Standard rolling 3-period mean (produces 2 initial NaNs)
-rolling_mean = prices.rolling(window=3).mean()
-print("Rolling 3-Period Mean (Default min_periods=3):\\n", rolling_mean)
+# 1. Peak probability density f(μ)
+peak_density = dist.pdf(mu)
+print(f"Peak Density at mean: {peak_density:.5f}")
 
-# 2. Rolling mean with min_periods=1 (no initial NaNs)
-rolling_no_nans = prices.rolling(window=3, min_periods=1).mean()
-print("\\nRolling Mean with min_periods=1:\\n", rolling_no_nans)`,
-    componentName: 'Stage31RollingWindow'
+# 2. Empirical Rule verification (±1σ, ±2σ, ±3σ)
+p_1sigma = dist.cdf(mu + sigma) - dist.cdf(mu - sigma)
+p_2sigma = dist.cdf(mu + 2*sigma) - dist.cdf(mu - 2*sigma)
+p_3sigma = dist.cdf(mu + 3*sigma) - dist.cdf(mu - 3*sigma)
+print(f"±1σ Area: {p_1sigma*100:.2f}% (Target: 68.27%)")
+print(f"±2σ Area: {p_2sigma*100:.2f}% (Target: 95.45%)")
+print(f"±3σ Area: {p_3sigma*100:.2f}% (Target: 99.73%)")
+
+# 3. Z-Score Standardization
+x_val = 22.5
+z_score = (x_val - mu) / sigma
+percentile = dist.cdf(x_val) * 100
+print(f"x={x_val} -> Z-Score: {z_score:.2f} (Percentile: {percentile:.1f}%)")`,
+    componentName: 'Stage31NormalDistribution'
   },
   {
     id: '32',
-    slug: 'memory-optimization-categorical',
-    aliases: ['32_memory_optimization_categorical'],
-    partId: 'pandas',
-    partTitle: 'Part 2: Pandas Tabular Processing',
-    moduleNumber: 15,
-    moduleTitle: 'High-Performance Data Engineering',
-    title: '32 • Memory Optimization: Categorical Dtypes & RAM Compaction',
-    shortDesc: 'Replacing bloated 64-bit Python string object pointers with compact 8-bit integer dictionary codes, slashing memory footprints by 85%+.',
-    tags: ['Pandas', 'category', 'astype', 'Memory Optimization', 'Dtypes', 'RAM'],
-    invariant: 'object dtype: 64-bit ptr + heap PyObject (86B/row) • category: int8 code (1B/row) + shared dictionary',
-    shapeFormula: 's.astype("category") -> 80-90% RAM reduction on low-cardinality strings',
+    slug: 'central-limit-theorem',
+    aliases: ['32_central_limit_theorem', 'central-limit-theorem', 'memory-optimization-categorical'],
+    partId: 'statistics',
+    partTitle: 'Part 4: Statistics & Distributions',
+    moduleNumber: 3,
+    moduleTitle: 'Visual Statistics & Distributions',
+    title: '32 • Central Limit Theorem: The Magic of Sampling & Convergence of Sample Means',
+    shortDesc: 'Convergence of sample means to a Gaussian normal distribution N(μ, σ²/N) regardless of parent population shape as sample size N increases.',
+    tags: ['Statistics', 'Central Limit Theorem', 'Sampling Distribution', 'Standard Error', 'Convergence', 'Sample Mean'],
+    invariant: 'X̄ ~ N(μ, σ²/N) as N → ∞ • Standard Error SE = σ / √N • N ≥ 30 standard convergence threshold',
+    shapeFormula: 'SE = σ_pop / √N • Convergence as N ≥ 30',
     theory: {
-      title: 'String Object Bloat vs. Dictionary Encoding',
-      concept: 'In standard Pandas, text columns use dtype="object", where each row holds a 64-bit pointer pointing to an individual PyUnicodeObject on the Python heap (~86 bytes per cell). Categorical encoding (astype("category")) creates a shared lookup dictionary of unique values and represents each cell with a compact integer code (int8 = 1 byte).',
-      practicalInsight: 'Converting repetitive text columns (state, department, status, category) to categorical dtypes can shrink 10 GB datasets down to 1.5 GB, allowing large-scale data science pipelines to run entirely in RAM without swapping.'
+      title: 'The Central Limit Theorem & Standard Error Convergence',
+      concept: 'The Central Limit Theorem (CLT) states that when independent random samples of size N are repeatedly drawn from ANY population with finite variance (whether uniform, skewed, or bimodal), the distribution of the sample means X̄ approaches a normal distribution as N grows. The mean of this sampling distribution equals the true population mean μ, and its standard deviation (Standard Error, SE) shrinks proportionally to 1/√N.',
+      practicalInsight: 'CLT is the cornerstone of statistical inference, hypothesis testing (Z-tests and t-tests), A/B testing confidence intervals, and Monte Carlo estimation. It justifies assuming normality in sample means even when raw population metrics are heavily non-normal.'
     },
-    pythonCode: `import pandas as pd
-import numpy as np
+    pythonCode: `import numpy as np
+from scipy import stats
 
-# Create repeated text series
-cities = pd.Series(['New York', 'London', 'Tokyo', 'New York', 'London'] * 20000)
+# Parent population: Bimodal or Exponential
+np.random.seed(42)
+pop_size = 100_000
+# Mix of two normal clusters: 30% at 25, 70% at 75
+pop = np.concatenate([
+    np.random.normal(25, 5, int(pop_size * 0.3)),
+    np.random.normal(75, 8, int(pop_size * 0.7))
+])
+pop_mean = np.mean(pop)
+pop_std = np.std(pop)
 
-print("Object Dtype Memory:", cities.memory_usage(deep=True) / 1024, "KB")
+# Draw K=1000 sample experiments with sample size N=30
+N = 30
+K = 1000
+sample_means = [np.mean(np.random.choice(pop, size=N, replace=True)) for _ in range(K)]
 
-# Convert to category
-cat_cities = cities.astype('category')
-print("Categorical Memory:", cat_cities.memory_usage(deep=True) / 1024, "KB")
-
-# Inspect underlying codes and categories
-print("Internal Codes (int8):", cat_cities.cat.codes.head(5).values)
-print("Shared Categories:", cat_cities.cat.categories.values)`,
-    componentName: 'Stage32MemoryCategorical'
+# Theoretical vs Empirical Standard Error
+theoretical_se = pop_std / np.sqrt(N)
+empirical_se = np.std(sample_means)
+print(f"Population Mean: {pop_mean:.2f} | Mean of Means: {np.mean(sample_means):.2f}")
+print(f"Theoretical SE: {theoretical_se:.3f} | Empirical SE: {empirical_se:.3f}")`,
+    componentName: 'Stage32CentralLimitTheorem'
   },
   {
     id: '33',

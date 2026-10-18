@@ -40,8 +40,8 @@ const hoveredPoint = ref<number | null>(null)
 
 // --- SVG ViewBox Geometry --------------------------------------------------
 const svgWidth = 800
-const svgHeight = 480
-const margin = { top: 35, right: 40, bottom: 90, left: 65 }
+const svgHeight = 500
+const margin = { top: 40, right: 40, bottom: 70, left: 60 }
 const plotWidth = svgWidth - margin.left - margin.right
 const plotHeight = svgHeight - margin.top - margin.bottom
 
@@ -285,132 +285,137 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-full flex flex-col gap-3 pb-8">
-    <!-- Top Action Toolbar -->
-    <div class="flex items-center justify-between gap-2 flex-wrap text-xs font-mono">
-      <!-- Preset Buttons -->
-      <div class="flex items-center gap-1.5 flex-wrap">
-        <span class="text-muted">Bandwidth Preset:</span>
-        <button
-          type="button"
-          @click="setPreset('under')"
-          class="px-2.5 py-1 rounded-md border transition-all text-[11px] font-medium shadow-2xs cursor-pointer"
-          :class="bandwidth < 2.5 ? 'bg-rose-600 text-white font-bold border-rose-600 shadow-xs' : 'bg-card border-line text-muted hover:text-ink'"
-        >
-          Spiky Undersmoothed (h=1.6)
-        </button>
-        <button
-          type="button"
-          @click="setPreset('optimal')"
-          class="px-2.5 py-1 rounded-md border transition-all text-[11px] font-medium shadow-2xs cursor-pointer"
-          :class="bandwidth >= 4.0 && bandwidth <= 7.0 ? 'bg-emerald-600 text-white font-bold border-emerald-600 shadow-xs' : 'bg-card border-line text-muted hover:text-ink'"
-        >
-          Optimal Bimodal (h=5.5)
-        </button>
-        <button
-          type="button"
-          @click="setPreset('over')"
-          class="px-2.5 py-1 rounded-md border transition-all text-[11px] font-medium shadow-2xs cursor-pointer"
-          :class="bandwidth > 9.0 ? 'bg-amber-600 text-white font-bold border-amber-600 shadow-xs' : 'bg-card border-line text-muted hover:text-ink'"
-        >
-          Flat Oversmoothed (h=14.0)
-        </button>
-      </div>
-
-      <!-- Visibility Toggles -->
-      <div class="flex items-center gap-1.5 bg-card px-2.5 py-1 rounded-md border border-line shadow-2xs">
-        <label class="flex items-center gap-1.5 cursor-pointer text-[11px]">
-          <input v-model="showHistogram" type="checkbox" class="accent-brand-blue" />
-          <span :class="showHistogram ? 'text-ink font-semibold' : 'text-muted'">Histogram</span>
-        </label>
-        <span class="text-line">|</span>
-        <label class="flex items-center gap-1.5 cursor-pointer text-[11px]">
-          <input v-model="showKde" type="checkbox" class="accent-emerald-500" />
-          <span :class="showKde ? 'text-ink font-semibold' : 'text-muted'">KDE Curve</span>
-        </label>
-        <span class="text-line">|</span>
-        <label class="flex items-center gap-1.5 cursor-pointer text-[11px]" title="Show component Gaussian bells beneath each sample">
-          <input v-model="showKernels" type="checkbox" class="accent-emerald-500" />
-          <span :class="showKernels ? 'text-ink font-semibold' : 'text-muted'">Individual Bells</span>
-        </label>
-      </div>
-    </div>
-
-    <!-- Dual Sliders: Bin Count (k) & KDE Bandwidth (h) -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-      <!-- Histogram Bin Count Slider -->
-      <div class="rounded-lg border border-line bg-card p-3 shadow-xs space-y-1.5 font-mono text-xs">
-        <div class="flex items-center justify-between">
-          <span class="font-bold text-ink flex items-center gap-1.5">
-            <BarChart2 class="w-3.5 h-3.5 text-brand-blue" />
-            Histogram Bins: <span class="text-brand-blue font-bold">k = {{ binCount }}</span>
-          </span>
-          <span class="text-muted text-[11px]">Width: Δx = {{ binWidthVal }}</span>
+  <div class="w-full flex flex-col gap-2 p-2 sm:p-3 pb-12 max-h-[calc(100vh-185px)] overflow-y-auto pr-1">
+    <!-- Top Controls / Sliders Header: Non-collapsing flex item -->
+    <header class="flex-none mb-1.5 space-y-1.5">
+      <!-- Preset Buttons & Visibility Toggles Bar -->
+      <div class="flex items-center justify-between gap-2 flex-wrap text-xs font-mono">
+        <!-- Preset Buttons -->
+        <div class="flex items-center gap-1.5 flex-wrap">
+          <span class="text-muted">Bandwidth Preset:</span>
+          <button
+            type="button"
+            @click="setPreset('under')"
+            class="px-2.5 py-1 rounded-md border transition-all text-[11px] font-medium shadow-2xs cursor-pointer"
+            :class="bandwidth < 2.5 ? 'bg-rose-600 text-white font-bold border-rose-600 shadow-xs' : 'bg-card border-line text-muted hover:text-ink'"
+          >
+            Spiky Undersmoothed (h=1.6)
+          </button>
+          <button
+            type="button"
+            @click="setPreset('optimal')"
+            class="px-2.5 py-1 rounded-md border transition-all text-[11px] font-medium shadow-2xs cursor-pointer"
+            :class="bandwidth >= 4.0 && bandwidth <= 7.0 ? 'bg-emerald-600 text-white font-bold border-emerald-600 shadow-xs' : 'bg-card border-line text-muted hover:text-ink'"
+          >
+            Optimal Bimodal (h=5.5)
+          </button>
+          <button
+            type="button"
+            @click="setPreset('over')"
+            class="px-2.5 py-1 rounded-md border transition-all text-[11px] font-medium shadow-2xs cursor-pointer"
+            :class="bandwidth > 9.0 ? 'bg-amber-600 text-white font-bold border-amber-600 shadow-xs' : 'bg-card border-line text-muted hover:text-ink'"
+          >
+            Flat Oversmoothed (h=14.0)
+          </button>
         </div>
-        <div class="flex items-center gap-3">
-          <span class="text-[10px] text-muted">3</span>
-          <input
-            v-model.number="binCount"
-            type="range"
-            min="3"
-            max="30"
-            step="1"
-            @input="emitInspection"
-            class="flex-1 accent-brand-blue cursor-pointer h-1.5 bg-line rounded-lg"
-          />
-          <span class="text-[10px] text-muted">30</span>
+
+        <!-- Visibility Toggles -->
+        <div class="flex items-center gap-1.5 bg-card px-2.5 py-1 rounded-md border border-line shadow-2xs">
+          <label class="flex items-center gap-1.5 cursor-pointer text-[11px]">
+            <input v-model="showHistogram" type="checkbox" class="accent-brand-blue" />
+            <span :class="showHistogram ? 'text-ink font-semibold' : 'text-muted'">Histogram</span>
+          </label>
+          <span class="text-line">|</span>
+          <label class="flex items-center gap-1.5 cursor-pointer text-[11px]">
+            <input v-model="showKde" type="checkbox" class="accent-emerald-500" />
+            <span :class="showKde ? 'text-ink font-semibold' : 'text-muted'">KDE Curve</span>
+          </label>
+          <span class="text-line">|</span>
+          <label class="flex items-center gap-1.5 cursor-pointer text-[11px]" title="Show component Gaussian bells beneath each sample">
+            <input v-model="showKernels" type="checkbox" class="accent-emerald-500" />
+            <span :class="showKernels ? 'text-ink font-semibold' : 'text-muted'">Individual Bells</span>
+          </label>
         </div>
       </div>
 
-      <!-- KDE Bandwidth Slider -->
-      <div class="rounded-lg border border-line bg-card p-3 shadow-xs space-y-1.5 font-mono text-xs">
-        <div class="flex items-center justify-between">
-          <span class="font-bold text-ink flex items-center gap-1.5">
-            <Activity class="w-3.5 h-3.5 text-emerald-600" />
-            Gaussian Bandwidth: <span class="text-emerald-600 font-bold">h = {{ bandwidth.toFixed(1) }}</span>
-          </span>
-          <span class="text-[11px] px-2 py-0.5 rounded border" :class="bandwidthEvaluation.badgeClass">
-            {{ bandwidthEvaluation.status.split(' ')[0] }}
-          </span>
+      <!-- Sliders in responsive grid card -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 p-2.5 sm:p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+        <!-- Histogram Bin Count Slider -->
+        <div class="space-y-1.5 font-mono text-xs">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-ink flex items-center gap-1.5">
+              <BarChart2 class="w-3.5 h-3.5 text-brand-blue" />
+              Histogram Bins: <span class="text-brand-blue font-bold">k = {{ binCount }}</span>
+            </span>
+            <span class="text-muted text-[11px]">Width: Δx = {{ binWidthVal }}</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-[10px] text-muted">3</span>
+            <input
+              v-model.number="binCount"
+              type="range"
+              min="3"
+              max="30"
+              step="1"
+              @input="emitInspection"
+              class="flex-1 accent-brand-blue cursor-pointer h-1.5 bg-line rounded-lg"
+            />
+            <span class="text-[10px] text-muted">30</span>
+          </div>
         </div>
-        <div class="flex items-center gap-3">
-          <span class="text-[10px] text-muted">1.0</span>
-          <input
-            v-model.number="bandwidth"
-            type="range"
-            min="1.0"
-            max="15.0"
-            step="0.2"
-            @input="emitInspection"
-            class="flex-1 accent-emerald-500 cursor-pointer h-1.5 bg-line rounded-lg"
-          />
-          <span class="text-[10px] text-muted">15.0</span>
+
+        <!-- KDE Bandwidth Slider -->
+        <div class="space-y-1.5 font-mono text-xs">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-ink flex items-center gap-1.5">
+              <Activity class="w-3.5 h-3.5 text-emerald-600" />
+              Gaussian Bandwidth: <span class="text-emerald-600 font-bold">h = {{ bandwidth.toFixed(1) }}</span>
+            </span>
+            <span class="text-[11px] px-2 py-0.5 rounded border" :class="bandwidthEvaluation.badgeClass">
+              {{ bandwidthEvaluation.status.split(' ')[0] }}
+            </span>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-[10px] text-muted">1.0</span>
+            <input
+              v-model.number="bandwidth"
+              type="range"
+              min="1.0"
+              max="15.0"
+              step="0.2"
+              @input="emitInspection"
+              class="flex-1 accent-emerald-500 cursor-pointer h-1.5 bg-line rounded-lg"
+            />
+            <span class="text-[10px] text-muted">15.0</span>
+          </div>
         </div>
       </div>
-    </div>
+    </header>
 
-    <!-- Main SVG Probability Density Plane -->
-    <div class="rounded-lg border border-line bg-card p-3 shadow-xs space-y-2">
-      <div class="flex items-center justify-between text-xs font-mono">
+    <!-- Main Visualization Stage: Takes all remaining viewport height -->
+    <main class="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm p-2 sm:p-4">
+      <!-- Title & Live Integrated Area Bar -->
+      <div class="w-full flex items-center justify-between text-xs font-mono mb-2 flex-none px-1">
         <span class="font-bold text-ink flex items-center gap-1.5">
           <Activity class="w-3.5 h-3.5 text-brand-blue" />
           Continuous Density Estimation vs. Discrete Bin Partitions
         </span>
         <div class="flex items-center gap-2 text-[11px]">
           <span class="text-muted">Integrated Area:</span>
-          <span class="font-bold px-1.5 py-0.5 rounded bg-card-subtle text-ink border border-line">
+          <span class="font-bold px-1.5 py-0.5 rounded bg-card text-ink border border-line">
             ∫ f̂(x) dx ≈ {{ totalIntegratedArea }}
           </span>
         </div>
       </div>
 
-      <!-- Fluid Responsive SVG Viewport -->
-      <div class="w-full min-h-[320px] flex items-center justify-center relative bg-card-subtle rounded-md border border-line/60 p-2 pb-4">
-        <svg
-          :viewBox="`0 0 ${svgWidth} ${svgHeight}`"
-          preserveAspectRatio="xMidYMid meet"
-          class="w-full h-auto select-none"
-        >
+      <!-- Chart Container: Fully visible, responsive, zero clipping -->
+      <div class="w-full flex-1 flex items-center justify-center py-1 px-1 sm:px-2">
+        <div class="w-full max-w-3xl aspect-[16/10] max-h-[220px] sm:max-h-[240px] md:max-h-[260px] relative flex items-center justify-center">
+          <svg 
+            viewBox="0 0 800 500" 
+            preserveAspectRatio="xMidYMid meet"
+            class="w-full h-full block"
+          >
           <!-- Background Grid Lines -->
           <g v-for="yt in yTicks" :key="yt.val">
             <line
@@ -464,14 +469,14 @@ onMounted(() => {
               :x1="xScale(xt)"
               :y1="margin.top + plotHeight"
               :x2="xScale(xt)"
-              :y2="margin.top + plotHeight + 7"
+              :y2="margin.top + plotHeight + 6"
               stroke="currentColor"
               stroke-width="1.5"
               class="text-line"
             />
             <text
               :x="xScale(xt)"
-              :y="margin.top + plotHeight + 26"
+              :y="margin.top + plotHeight + 20"
               text-anchor="middle"
               font-family="monospace"
               font-size="10.5"
@@ -483,7 +488,7 @@ onMounted(() => {
           </g>
           <text
             :x="svgWidth / 2"
-            :y="svgHeight - 16"
+            :y="svgHeight - 12"
             text-anchor="middle"
             font-family="monospace"
             font-size="11"
@@ -579,7 +584,7 @@ onMounted(() => {
           <!-- Rug Label Annotation -->
           <text
             :x="svgWidth - margin.right"
-            :y="margin.top + plotHeight + 42"
+            :y="margin.top + plotHeight + 35"
             text-anchor="end"
             font-family="monospace"
             font-size="9"
@@ -590,9 +595,12 @@ onMounted(() => {
           </text>
         </svg>
       </div>
+    </div>
+  </main>
 
-      <!-- Telemetry Assessment Card -->
-      <div class="rounded-md border border-line bg-card p-3 font-mono text-xs space-y-2">
+    <!-- Telemetry / Bottom Status Bar: Non-collapsing footer -->
+    <footer class="flex-none mt-2.5">
+      <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-2.5 sm:p-3 shadow-sm font-mono text-xs space-y-1.5">
         <div class="flex items-center justify-between border-b border-line/60 pb-1.5">
           <span class="font-bold text-ink flex items-center gap-1.5">
             <Info class="w-3.5 h-3.5 text-brand-blue" />
@@ -606,20 +614,18 @@ onMounted(() => {
           {{ bandwidthEvaluation.description }}
         </p>
 
-        <!-- Python Code snippet -->
-        <div class="pt-1 border-t border-line/40">
-          <span class="text-[10px] text-muted uppercase font-bold tracking-wider">Scikit-Learn &amp; SciPy Formulation:</span>
-          <pre class="mt-1 text-[11px] text-ink overflow-x-auto whitespace-pre-wrap bg-card-subtle p-2 rounded border border-line/40"># Gaussian Kernel Density Estimation (SciPy / Scikit-Learn)
-from sklearn.neighbors import KernelDensity
-import numpy as np
-
-X = np.array({{ JSON.stringify(samplePoints.slice(0, 8)) }} + [...])[:, np.newaxis]
+        <!-- Python Formulation Snippet -->
+        <div class="pt-1.5 border-t border-line/40">
+          <div class="flex items-center justify-between text-[10px] text-muted font-bold tracking-wider uppercase mb-1">
+            <span>Scikit-Learn &amp; SciPy Formulation:</span>
+            <span class="text-brand-blue font-mono font-semibold lowercase">sklearn.neighbors.KernelDensity</span>
+          </div>
+          <pre class="text-[11px] font-mono text-ink overflow-x-auto whitespace-pre bg-card-subtle p-2 rounded border border-line/40 leading-relaxed">from sklearn.neighbors import KernelDensity
 kde = KernelDensity(kernel='gaussian', bandwidth={{ bandwidth.toFixed(1) }}).fit(X)
-log_density = kde.score_samples(eval_points)
-density = np.exp(log_density)  # Strictly continuous, differentiable PDF</pre>
+density = np.exp(kde.score_samples(eval_points))  # Strictly continuous, differentiable PDF</pre>
         </div>
       </div>
-    </div>
+    </footer>
   </div>
 </template>
 

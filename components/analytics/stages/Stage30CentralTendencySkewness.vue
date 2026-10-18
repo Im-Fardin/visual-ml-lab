@@ -33,8 +33,8 @@ const showAreaHalves = ref<boolean>(false)
 
 // SVG ViewBox Geometry
 const svgWidth = 800
-const svgHeight = 480
-const margin = { top: 45, right: 45, bottom: 85, left: 55 }
+const svgHeight = 500
+const margin = { top: 40, right: 40, bottom: 70, left: 60 }
 const plotWidth = svgWidth - margin.left - margin.right
 const plotHeight = svgHeight - margin.top - margin.bottom
 
@@ -243,82 +243,85 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="w-full flex flex-col gap-3 pb-8">
-    <!-- Top Action Toolbar -->
-    <div class="flex items-center justify-between gap-2 flex-wrap text-xs font-mono">
-      <!-- Preset Distribution Switcher -->
-      <div class="flex items-center gap-1.5 flex-wrap">
-        <span class="text-muted">Distribution:</span>
-        <button
-          type="button"
-          @click="setPreset('right_skew')"
-          class="px-2.5 py-1 rounded-md border transition-all text-[11px] font-medium shadow-2xs cursor-pointer"
-          :class="activePreset === 'right_skew' ? 'bg-amber-600 text-white font-bold border-amber-600 shadow-xs' : 'bg-card border-line text-muted hover:text-ink'"
-        >
-          Right-Skewed (Income Distribution)
-        </button>
-        <button
-          type="button"
-          @click="setPreset('symmetric')"
-          class="px-2.5 py-1 rounded-md border transition-all text-[11px] font-medium shadow-2xs cursor-pointer"
-          :class="activePreset === 'symmetric' ? 'bg-brand-blue text-white font-bold border-brand-blue shadow-xs' : 'bg-card border-line text-muted hover:text-ink'"
-        >
-          Symmetric (Normal Bell)
-        </button>
-        <button
-          type="button"
-          @click="setPreset('left_skew')"
-          class="px-2.5 py-1 rounded-md border transition-all text-[11px] font-medium shadow-2xs cursor-pointer"
-          :class="activePreset === 'left_skew' ? 'bg-purple-600 text-white font-bold border-purple-600 shadow-xs' : 'bg-card border-line text-muted hover:text-ink'"
-        >
-          Left-Skewed (Exam Scores)
-        </button>
-      </div>
+  <div class="w-full flex flex-col gap-2 p-2 sm:p-3 pb-12 max-h-[calc(100vh-185px)] overflow-y-auto pr-1">
+    <!-- Top Controls / Sliders Header: Non-collapsing flex item -->
+    <header class="flex-none mb-1.5 space-y-1.5">
+      <!-- Top Preset Distribution Switcher & Area Halves Toggle -->
+      <div class="flex items-center justify-between gap-2 flex-wrap text-xs font-mono">
+        <!-- Preset Buttons -->
+        <div class="flex items-center gap-1.5 flex-wrap">
+          <span class="text-muted">Distribution:</span>
+          <button
+            type="button"
+            @click="setPreset('right_skew')"
+            class="px-2.5 py-1 rounded-md border transition-all text-[11px] font-medium shadow-2xs cursor-pointer"
+            :class="activePreset === 'right_skew' ? 'bg-amber-600 text-white font-bold border-amber-600 shadow-xs' : 'bg-card border-line text-muted hover:text-ink'"
+          >
+            Right-Skewed (Income)
+          </button>
+          <button
+            type="button"
+            @click="setPreset('symmetric')"
+            class="px-2.5 py-1 rounded-md border transition-all text-[11px] font-medium shadow-2xs cursor-pointer"
+            :class="activePreset === 'symmetric' ? 'bg-brand-blue text-white font-bold border-brand-blue shadow-xs' : 'bg-card border-line text-muted hover:text-ink'"
+          >
+            Symmetric (Normal)
+          </button>
+          <button
+            type="button"
+            @click="setPreset('left_skew')"
+            class="px-2.5 py-1 rounded-md border transition-all text-[11px] font-medium shadow-2xs cursor-pointer"
+            :class="activePreset === 'left_skew' ? 'bg-purple-600 text-white font-bold border-purple-600 shadow-xs' : 'bg-card border-line text-muted hover:text-ink'"
+          >
+            Left-Skewed (Exam Scores)
+          </button>
+        </div>
 
-      <!-- Area Halves Toggle -->
-      <div class="flex items-center gap-2 bg-card px-3 py-1 rounded-md border border-line shadow-2xs">
-        <label class="flex items-center gap-1.5 cursor-pointer text-[11px]">
-          <input v-model="showAreaHalves" type="checkbox" class="accent-amber-500" />
-          <span :class="showAreaHalves ? 'text-ink font-bold' : 'text-muted'">Show 50% / 50% Area Halves</span>
-        </label>
-      </div>
-    </div>
-
-    <!-- Live Outlier Gravitational Drag Slider -->
-    <div class="rounded-lg border border-line bg-card p-3 shadow-xs space-y-2 font-mono text-xs">
-      <div class="flex items-center justify-between">
-        <span class="font-bold text-ink flex items-center gap-1.5">
-          <AlertTriangle class="w-4 h-4 text-rose-500" />
-          Outlier Gravitational Pull:
-          <span class="text-rose-600 dark:text-rose-400 font-bold text-sm">x_outlier = ${{ outlierX }}k</span>
-        </span>
-        <div class="flex items-center gap-2 text-[11px]">
-          <span class="text-muted">Divergence Gap:</span>
-          <span class="px-2 py-0.5 rounded font-bold bg-rose-500/20 text-rose-700 dark:text-rose-300 border border-rose-500/30">
-            |Mean - Median| = {{ liveStats.divergence }}k
-          </span>
+        <!-- Area Halves Toggle -->
+        <div class="flex items-center gap-2 bg-card px-3 py-1 rounded-md border border-line shadow-2xs">
+          <label class="flex items-center gap-1.5 cursor-pointer text-[11px]">
+            <input v-model="showAreaHalves" type="checkbox" class="accent-amber-500" />
+            <span :class="showAreaHalves ? 'text-ink font-bold' : 'text-muted'">Show 50% / 50% Area Halves</span>
+          </label>
         </div>
       </div>
 
-      <div class="flex items-center gap-3">
-        <span class="text-[10px] text-muted">0k</span>
-        <input
-          v-model.number="outlierX"
-          type="range"
-          min="10"
-          max="240"
-          step="2"
-          @input="emitInspection"
-          class="flex-1 accent-rose-500 cursor-pointer h-1.5 bg-line rounded-lg"
-        />
-        <span class="text-[10px] text-muted">240k</span>
-      </div>
-    </div>
+      <!-- Controls Card: Outlier Gravitational Drag Slider + Divergence Metric -->
+      <div class="p-2.5 sm:p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm space-y-2 font-mono text-xs">
+        <div class="flex items-center justify-between">
+          <span class="font-bold text-ink flex items-center gap-1.5">
+            <AlertTriangle class="w-4 h-4 text-rose-500" />
+            Outlier Gravitational Pull:
+            <span class="text-rose-600 dark:text-rose-400 font-bold text-sm">x_outlier = ${{ outlierX }}k</span>
+          </span>
+          <div class="flex items-center gap-2 text-[11px]">
+            <span class="text-muted">Divergence Gap:</span>
+            <span class="px-2 py-0.5 rounded font-bold bg-rose-500/20 text-rose-700 dark:text-rose-300 border border-rose-500/30">
+              |Mean - Median| = {{ liveStats.divergence }}k
+            </span>
+          </div>
+        </div>
 
-    <!-- Main SVG Distribution Plane -->
-    <div class="rounded-lg border border-line bg-card p-3 shadow-xs space-y-3">
+        <div class="flex items-center gap-3">
+          <span class="text-[10px] text-muted">0k</span>
+          <input
+            v-model.number="outlierX"
+            type="range"
+            min="10"
+            max="240"
+            step="2"
+            @input="emitInspection"
+            class="flex-1 accent-rose-500 cursor-pointer h-1.5 bg-line rounded-lg"
+          />
+          <span class="text-[10px] text-muted">240k</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Visualization Stage: Takes all remaining viewport height -->
+    <main class="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm p-2 sm:p-4">
       <!-- Badges HUD for the 3 Central Tendencies -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 font-mono text-xs">
+      <div class="w-full grid grid-cols-1 sm:grid-cols-3 gap-2.5 font-mono text-xs mb-2 flex-none max-w-5xl mx-auto">
         <!-- Mode Badge (Purple) -->
         <div class="flex items-center justify-between p-2 rounded-md bg-purple-500/10 border border-purple-500/30">
           <div class="flex items-center gap-1.5">
@@ -347,13 +350,14 @@ onMounted(() => {
         </div>
       </div>
 
-      <!-- Fluid Responsive SVG Viewport -->
-      <div class="w-full min-h-[320px] flex items-center justify-center relative bg-card-subtle rounded-md border border-line/60 p-2 pb-4">
-        <svg
-          :viewBox="`0 0 ${svgWidth} ${svgHeight}`"
-          preserveAspectRatio="xMidYMid meet"
-          class="w-full h-auto select-none"
-        >
+      <!-- Chart Container: Fully visible, responsive, zero clipping -->
+      <div class="w-full flex-1 flex items-center justify-center py-1 px-1 sm:px-2">
+        <div class="w-full max-w-3xl aspect-[16/10] max-h-[220px] sm:max-h-[240px] md:max-h-[260px] relative flex items-center justify-center">
+          <svg 
+            viewBox="0 0 800 500" 
+            preserveAspectRatio="xMidYMid meet"
+            class="w-full h-full block"
+          >
           <!-- Horizontal Baseline (X-Axis) -->
           <line
             :x1="margin.left"
@@ -371,14 +375,14 @@ onMounted(() => {
               :x1="xScale(tick)"
               :y1="margin.top + plotHeight"
               :x2="xScale(tick)"
-              :y2="margin.top + plotHeight + 7"
+              :y2="margin.top + plotHeight + 6"
               stroke="currentColor"
               stroke-width="1.5"
               class="text-line"
             />
             <text
               :x="xScale(tick)"
-              :y="margin.top + plotHeight + 26"
+              :y="margin.top + plotHeight + 20"
               text-anchor="middle"
               font-family="monospace"
               font-size="10.5"
@@ -390,7 +394,7 @@ onMounted(() => {
           </g>
           <text
             :x="svgWidth / 2"
-            :y="svgHeight - 16"
+            :y="svgHeight - 12"
             text-anchor="middle"
             font-family="monospace"
             font-size="11"
@@ -584,7 +588,7 @@ onMounted(() => {
           <g>
             <line
               :x1="xScale(outlierX)"
-              :y1="margin.top + plotHeight - 28"
+              :y1="margin.top + plotHeight - 26"
               :x2="xScale(outlierX)"
               :y2="margin.top + plotHeight"
               stroke="#f43f5e"
@@ -592,8 +596,8 @@ onMounted(() => {
             />
             <circle
               :cx="xScale(outlierX)"
-              :cy="margin.top + plotHeight - 28"
-              r="7.5"
+              :cy="margin.top + plotHeight - 26"
+              r="7"
               fill="#f43f5e"
               stroke="#ffffff"
               stroke-width="2"
@@ -601,7 +605,7 @@ onMounted(() => {
             />
             <text
               :x="xScale(outlierX)"
-              :y="margin.top + plotHeight - 40"
+              :y="margin.top + plotHeight - 38"
               text-anchor="middle"
               font-family="monospace"
               font-size="9.5"
@@ -613,9 +617,12 @@ onMounted(() => {
           </g>
         </svg>
       </div>
+    </div>
+  </main>
 
-      <!-- Educational Skewness Invariant Note -->
-      <div class="rounded-md border border-line bg-card p-3 font-mono text-xs space-y-2">
+    <!-- Telemetry / Bottom Status Bar: Non-collapsing footer -->
+    <footer class="flex-none mt-2.5">
+      <div class="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-2.5 sm:p-3 shadow-sm font-mono text-xs space-y-1.5">
         <div class="flex items-center justify-between border-b border-line/60 pb-1.5">
           <span class="font-bold text-ink flex items-center gap-1.5">
             <Info class="w-3.5 h-3.5 text-brand-blue" />
@@ -629,25 +636,18 @@ onMounted(() => {
           {{ skewnessAssessment.summary }}
         </p>
 
-        <!-- Python Code Snippet -->
-        <div class="pt-1 border-t border-line/40">
-          <span class="text-[10px] text-muted uppercase font-bold tracking-wider">SciPy &amp; Pandas Calculation:</span>
-          <pre class="mt-1 text-[11px] text-ink overflow-x-auto whitespace-pre-wrap bg-card-subtle p-2 rounded border border-line/40">import pandas as pd
-from scipy import stats
-
-income = pd.Series([...])
-
-# 1. Mode: Frequency peak
-mode_val = income.mode()[0]       # ${{ liveStats.mode }}k (Immovable peak)
-
-# 2. Median: 50th percentile rank
-median_val = income.median()      # ${{ liveStats.median }}k (Outlier-resistant)
-
-# 3. Mean: Center of mass
-mean_val = income.mean()          # ${{ liveStats.mean }}k (Pulled by ${{ outlierX }}k outlier!)</pre>
+        <!-- Python Calculation Snippet -->
+        <div class="pt-1.5 border-t border-line/40">
+          <div class="flex items-center justify-between text-[10px] text-muted font-bold tracking-wider uppercase mb-1">
+            <span>SciPy &amp; Pandas Calculation:</span>
+            <span class="text-rose-500 font-mono font-semibold lowercase">scipy.stats &amp; pandas</span>
+          </div>
+          <pre class="text-[11px] font-mono text-ink overflow-x-auto whitespace-pre bg-card-subtle p-2 rounded border border-line/40 leading-relaxed">mode_val   = income.mode()[0]   # ${{ liveStats.mode }}k (Immovable peak frequency)
+median_val = income.median()    # ${{ liveStats.median }}k (50% rank bisector, outlier-resistant)
+mean_val   = income.mean()      # ${{ liveStats.mean }}k (Center of mass, pulled by ${{ outlierX }}k outlier)</pre>
         </div>
       </div>
-    </div>
+    </footer>
   </div>
 </template>
 
