@@ -1308,66 +1308,87 @@ print(f"Theoretical SE: {theoretical_se:.3f} | Empirical SE: {empirical_se:.3f}"
   },
   {
     id: '33',
-    slug: 'chunking-large-files',
-    aliases: ['33_chunking_large_files'],
-    partId: 'pandas',
-    partTitle: 'Part 2: Pandas Tabular Processing',
-    moduleNumber: 15,
-    moduleTitle: 'High-Performance Data Engineering',
-    title: '33 • Out-of-Core Processing: chunksize Streaming Generators',
-    shortDesc: 'Processing datasets larger than physical RAM by streaming bounded chunk slices from disk into memory with running accumulators.',
-    tags: ['Pandas', 'chunksize', 'read_csv', 'Out-of-Core', 'Generators', 'MemoryError'],
-    invariant: 'Peak RAM remains bounded at O(chunksize) rather than exploding to O(N)',
-    shapeFormula: 'pd.read_csv(file, chunksize=N) -> TextFileReader Generator',
+    slug: 'pdf-cdf-quantiles',
+    aliases: ['33_pdf_cdf_quantiles', 'pdf-cdf-quantiles', 'chunking-large-files', '33_chunking_large_files'],
+    partId: 'statistics',
+    partTitle: 'Part 4: Statistics & Distributions',
+    moduleNumber: 3,
+    moduleTitle: 'Visual Statistics & Distributions',
+    title: '33 • PDF vs. CDF: Quantiles, Percentiles & Probability Integration',
+    shortDesc: 'Dual-plane synchronized probability: Area under the PDF curve maps directly to height on the CDF sigmoid curve, with quantile snaps (Q1, Median, Q3, IQR).',
+    tags: ['Statistics', 'Probability', 'PDF', 'CDF', 'Quantiles', 'Percentiles', 'IQR'],
+    invariant: 'CDF is the running integral of PDF: F(x) = ∫_{-∞}^x f(t)dt • F(x) ∈ [0, 1] • Area under PDF = CDF height',
+    shapeFormula: 'F(x) = ∫_{-∞}^x f(t)dt • Q(p) = F⁻¹(p) • IQR = Q₃ - Q₁',
     theory: {
-      title: 'Bounded Streaming vs. Monolithic File Ingestion',
-      concept: 'Ingesting massive CSV files via pd.read_csv() causes Out-Of-Memory (OOM) crashes if the dataset exceeds available RAM. Passing chunksize=N returns an iterable TextFileReader generator that yields DataFrames of N rows at a time, allowing continuous batch aggregation with constant memory consumption.',
-      practicalInsight: 'Combine chunksize streaming with filtering to process massive event logs: filter relevant rows inside the chunk loop and append only the filtered subsets into a final collected DataFrame.'
+      title: 'Continuous Probability Topology: Density vs. Cumulative Probability',
+      concept: 'For any continuous random variable, the point probability P(X = x) is identically zero. Instead, probability exists only over intervals as the area under the Probability Density Function f(x). The Cumulative Distribution Function F(x) = P(X ≤ x) accumulates this area from -∞ to x. The value of F(x) matches the shaded area of f(x) exactly, reaching 0.5 at the median and asymptotically approaching 1.0.',
+      practicalInsight: 'Quantiles Q(p) = F⁻¹(p) map probabilities back to feature values. The Interquartile Range (IQR = Q₃ - Q₁) spans the central 50% of the distribution and forms the bedrock of non-parametric outlier detection (Tukey fences: [Q₁ - 1.5·IQR, Q₃ + 1.5·IQR]).'
     },
-    pythonCode: `import pandas as pd
+    pythonCode: `import numpy as np
+from scipy import stats
 
-total_sales = 0
-total_transactions = 0
+# Standard Normal Distribution N(0, 1)
+dist = stats.norm(loc=0, scale=1)
 
-# Stream 1000 rows at a time with constant RAM
-for chunk in pd.read_csv('massive_transactions.csv', chunksize=1000):
-    total_sales += chunk['amount'].sum()
-    total_transactions += len(chunk)
-    # Chunk memory is automatically freed by Python garbage collector!
+# 1. Point Density vs Cumulative Probability at x = 0 (Median)
+pdf_val = dist.pdf(0.0)
+cdf_val = dist.cdf(0.0)
+print(f"Density f(0): {pdf_val:.4f} | Cumulative Prob F(0): {cdf_val:.4f}")
 
-print(f"Total Processed: \${total_sales:,.2f} across {total_transactions:,} rows")`,
-    componentName: 'Stage33ChunkingLargeFiles'
+# 2. Key Quantiles (Percentiles via Percent Point Function / Quantile Function)
+q1 = dist.ppf(0.25)
+median = dist.ppf(0.50)
+q3 = dist.ppf(0.75)
+iqr = q3 - q1
+
+print(f"Q1 (25%): {q1:.3f} | Median (50%): {median:.3f} | Q3 (75%): {q3:.3f}")
+print(f"Interquartile Range (IQR): {iqr:.3f}")
+
+# 3. Interval Probability P(-1 <= X <= 1)
+p_within_1sigma = dist.cdf(1.0) - dist.cdf(-1.0)
+print(f"P(-1 <= X <= 1): {p_within_1sigma*100:.2f}%")`,
+    componentName: 'Stage33PdfCdfQuantiles'
   },
   {
     id: '34',
-    slug: 'row-vs-columnar-parquet',
-    aliases: ['34_row_vs_columnar_parquet'],
-    partId: 'pandas',
-    partTitle: 'Part 2: Pandas Tabular Processing',
-    moduleNumber: 15,
-    moduleTitle: 'High-Performance Data Engineering',
-    title: '34 • Row vs. Columnar Storage: Parquet Projection Pushdown & Compression',
-    shortDesc: 'Comparing full-scan row formats (CSV) against columnar storage (Apache Parquet) with column projection pushdown and Snappy compression.',
-    tags: ['Pandas', 'Parquet', 'CSV', 'Columnar', 'Projection Pushdown', 'Snappy', 'Arrow'],
-    invariant: 'CSV: 100% full file disk scan • Parquet: Reads ONLY the queried column byte blocks from disk',
-    shapeFormula: 'pd.read_parquet(file, columns=[col]) -> Skips 85%+ disk I/O',
+    slug: 'correlation-scatter',
+    aliases: ['34_correlation_scatter', 'correlation-scatter', 'row-vs-columnar-parquet', '34_row_vs_columnar_parquet'],
+    partId: 'statistics',
+    partTitle: 'Part 4: Statistics & Distributions',
+    moduleNumber: 3,
+    moduleTitle: 'Visual Statistics & Distributions',
+    title: '34 • Correlation & Scatter Plots: Pearson r, OLS Regression & Non-Linear Traps',
+    shortDesc: 'Visualizing Pearson correlation coefficient r, bivariate dispersion, OLS regression slope vs. correlation, centroid quadrant crosshairs, and non-linear traps.',
+    tags: ['Statistics', 'Correlation', 'Pearson r', 'OLS Regression', 'Scatter Plot', 'Outliers', 'Leverage', 'Non-Linear'],
+    invariant: 'Pearson r = Cov(X,Y)/(σx·σy) ∈ [-1, +1] • OLS slope β₁ = Cov(X,Y)/Var(X) • r measures linear association only',
+    shapeFormula: 'r = Σ(x - x̄)(y - ȳ) / √(Σ(x - x̄)² Σ(y - ȳ)²) • ŷ = β₁x + β₀',
     theory: {
-      title: 'Columnar File Architecture & Projection Pushdown',
-      concept: 'CSV files store data in row-major order: every single line must be read from disk and parsed to access any individual field. Apache Parquet stores data column-by-column in binary blocks. Projection pushdown allows the engine to seek directly to the byte offset of requested columns, bypassing all other columns completely.',
-      practicalInsight: 'Switching production data lakes from CSV/JSON to Parquet typically cuts disk storage by 75% and query execution time by 10x-50x due to vectorized column decoding and bypassed disk I/O.'
+      title: 'Bivariate Linear Association, Quadrant Concordance & Regression Leverage',
+      concept: 'Pearson correlation r measures the strength and direction of linear association between two continuous variables. By centering coordinates at the centroid (x̄, Ȳ), each point contributes (x - x̄)(y - Ȳ). Concordant points in quadrants I and III yield positive products, while discordant points in quadrants II and IV yield negative products. Ordinary Least Squares (OLS) minimizes the sum of squared vertical residuals Σ(y - ŷ)².',
+      practicalInsight: 'Always inspect scatter plots visually! Pearson r can be severely misled: deterministic non-linear curves (e.g. U-shaped parabolas) can produce r ≈ 0, while a single high-leverage outlier can pivot the OLS line and artificially inflate or collapse r. Use Spearman rank correlation when relationships are monotonic but non-linear.'
     },
-    pythonCode: `import pandas as pd
+    pythonCode: `import numpy as np
+from scipy import stats
 
-# Ingestion benchmark:
-# 1. CSV: Full table scan reading all columns
-# df_csv = pd.read_csv('large_dataset.csv')
+# Generate bivariate data with specified correlation
+r_target = 0.75
+cov_matrix = [[1.0, r_target], [r_target, 1.0]]
+data = np.random.multivariate_normal([50, 50], cov_matrix, size=100)
+x, y = data[:, 0], data[:, 1]
 
-# 2. Parquet: Reads ONLY the required columns directly from disk
-df_parquet = pd.read_parquet('large_dataset.parquet', columns=['salary', 'department'])
+# 1. Pearson Correlation & Two-Tailed Significance
+r, p_val = stats.pearsonr(x, y)
+print(f"Pearson r: {r:.4f} (p-value: {p_val:.4e})")
 
-print("Parquet Columns Loaded:", list(df_parquet.columns))
-print("Memory Usage:", df_parquet.memory_usage(deep=True).sum() / 1024, "KB")`,
-    componentName: 'Stage34RowVsColumnarParquet'
+# 2. OLS Linear Regression (Slope β₁ & Intercept β₀)
+slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
+r_squared = r_value ** 2
+print(f"OLS Fit: y = {slope:.3f}x + {intercept:.2f} | R² = {r_squared*100:.1f}%")
+
+# 3. Robust Non-Parametric Spearman Rank Correlation
+spearman_rho, _ = stats.spearmanr(x, y)
+print(f"Spearman rho: {spearman_rho:.4f}")`,
+    componentName: 'Stage34CorrelationScatter'
   },
   {
     id: '35',

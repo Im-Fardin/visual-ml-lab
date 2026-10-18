@@ -45,6 +45,8 @@ import Stage31NormalDistribution from '~/components/analytics/stages/Stage31Norm
 import Stage32CentralLimitTheorem from '~/components/analytics/stages/Stage32CentralLimitTheorem.vue'
 import Stage31RollingWindow from '~/components/analytics/stages/Stage31RollingWindow.vue'
 import Stage32MemoryCategorical from '~/components/analytics/stages/Stage32MemoryCategorical.vue'
+import Stage33PdfCdfQuantiles from '~/components/analytics/stages/Stage33PdfCdfQuantiles.vue'
+import Stage34CorrelationScatter from '~/components/analytics/stages/Stage34CorrelationScatter.vue'
 import Stage33ChunkingLargeFiles from '~/components/analytics/stages/Stage33ChunkingLargeFiles.vue'
 import Stage34RowVsColumnarParquet from '~/components/analytics/stages/Stage34RowVsColumnarParquet.vue'
 import Stage35FeatureScaling from '~/components/analytics/stages/Stage35FeatureScaling.vue'
@@ -157,6 +159,10 @@ const stageComponent = computed(() => {
     case 'Stage32CentralLimitTheorem':
     case 'Stage32MemoryCategorical':
       return Stage32CentralLimitTheorem
+    case 'Stage33PdfCdfQuantiles':
+      return Stage33PdfCdfQuantiles
+    case 'Stage34CorrelationScatter':
+      return Stage34CorrelationScatter
     case 'Stage33ChunkingLargeFiles':
       return Stage33ChunkingLargeFiles
     case 'Stage34RowVsColumnarParquet':
