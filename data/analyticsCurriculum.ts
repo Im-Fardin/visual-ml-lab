@@ -1392,40 +1392,41 @@ print(f"Spearman rho: {spearman_rho:.4f}")`,
   },
   {
     id: '35',
-    slug: 'feature-scaling-standard-minmax',
-    aliases: ['35_feature_scaling_standard_minmax'],
-    partId: 'preprocessing',
-    partTitle: 'Part 3: Feature Engineering & Preprocessing',
-    moduleNumber: 16,
-    moduleTitle: 'Feature Scaling & Normalization',
-    title: '35 • Feature Scaling: StandardScaler vs. MinMaxScaler vs. RobustScaler',
-    shortDesc: 'Contrasting mean-variance standardization (z-score), bounded min-max compression [0, 1], and median-IQR outlier resilience.',
-    tags: ['Preprocessing', 'StandardScaler', 'MinMaxScaler', 'RobustScaler', 'Outliers', 'Feature Scaling'],
-    invariant: 'Standard: z=(x-μ)/σ • MinMax: (x-min)/(max-min) squashes under outliers • Robust: (x-Q2)/IQR preserves resolution',
-    shapeFormula: 'X_scaled = scaler.fit_transform(X) -> Matrix(N, M)',
+    slug: 'hypothesis-testing',
+    aliases: ['35_hypothesis_testing', 'hypothesis-testing', 'feature-scaling-standard-minmax', '35_feature_scaling_standard_minmax'],
+    partId: 'statistics',
+    partTitle: 'Part 4: Statistics & Distributions',
+    moduleNumber: 3,
+    moduleTitle: 'Visual Statistics & Distributions',
+    title: '35 • Hypothesis Testing: Null Hypothesis H₀, Alpha Thresholds & The Intuition of p-value',
+    shortDesc: 'Visualizing sampling distributions under H₀, Type I error α critical rejection tails, test statistic Z_obs, and the geometric intuition of p-value.',
+    tags: ['Statistics', 'Hypothesis Testing', 'p-value', 'Significance', 'Null Hypothesis', 'Type I Error', 'Z-Test', 'Critical Region'],
+    invariant: 'p-value = P(Data as extreme | H₀ is true) • If p < α: Reject H₀ • If p ≥ α: Fail to Reject H₀ • Two-tailed Z_crit = ±1.96 for α = 0.05',
+    shapeFormula: 'Z = (X̄ - μ₀) / (σ / √n) • Reject H₀ iff |Z| ≥ Z_{1 - α/2} (Two-Tailed)',
     theory: {
-      title: 'Geometric Distortion & Outlier Vulnerability in Feature Scaling',
-      concept: 'Distance-based algorithms (KNN, SVM, K-Means) and gradient-based optimizers (Logistic Regression, Neural Networks) are severely biased when features possess disparate scales. StandardScaler centers features at μ=0 with unit variance, but extreme outliers inflate σ and drag μ. MinMaxScaler compresses features strictly into [0, 1], causing extreme outliers to squash all legitimate variance into a narrow sliver near 0. RobustScaler subtracts the median (Q2) and divides by the Interquartile Range (IQR = Q3 - Q1), making it impervious to outlier distortion.',
-      practicalInsight: 'Never use MinMaxScaler on unbounded real-world features prone to extreme anomalies (e.g., transaction amounts, server latency). Prefer RobustScaler when outliers cannot be safely trimmed, or StandardScaler when data is approximately Gaussian.'
+      title: 'Null Hypothesis Significance Testing (NHST) & The Geometry of p-value',
+      concept: 'Hypothesis testing formalizes decision-making under uncertainty. The Null Hypothesis H₀ serves as the skeptical default (e.g. no treatment effect, μ = μ₀). Under H₀, sample test statistics follow a known sampling distribution (e.g. standard normal N(0, 1)). The significance level α defines the critical rejection region: if the observed test statistic Z_obs falls inside this tail, the result is deemed statistically significant. The p-value quantifies the probability of obtaining a test statistic at least as extreme as Z_obs under the assumption that H₀ is strictly true.',
+      practicalInsight: 'A p-value is NOT the probability that H₀ is true, nor does it measure effect size. A tiny p-value can result from a negligible effect if sample size n is large. Always pair p-values with effect size measures (Cohen d) and confidence intervals.'
     },
-    pythonCode: `from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler
-import numpy as np
+    pythonCode: `import numpy as np
+from scipy import stats
 
-# Housing sq ft with extreme outlier
-X = np.array([[1200], [1450], [1600], [1750], [1900], [2100], [15000]])
+# A/B Testing Experiment: Control vs. Treatment
+control = np.array([21.4, 23.1, 19.8, 22.5, 20.9, 21.8, 22.2])
+treatment = np.array([24.5, 26.1, 23.8, 25.0, 24.2, 25.7, 24.9])
 
-# 1. StandardScaler (Outlier drags mean and inflates std)
-z_scaled = StandardScaler().fit_transform(X)
+# 1. Independent Two-Sample t-test (Two-Tailed)
+t_stat, p_val = stats.ttest_ind(treatment, control, equal_var=False)
+alpha = 0.05
 
-# 2. MinMaxScaler (Outlier lands at 1.0; squashes normal houses into [0.0, 0.065])
-mm_scaled = MinMaxScaler().fit_transform(X)
+print(f"t-statistic: {t_stat:.4f} | p-value: {p_val:.5f}")
 
-# 3. RobustScaler (Median=1750, IQR=650; normal houses preserve spread)
-rob_scaled = RobustScaler().fit_transform(X)
-
-print("MinMax Normal Range:", mm_scaled[:6].min(), "to", mm_scaled[:6].max())
-print("Robust Normal Range:", rob_scaled[:6].min(), "to", rob_scaled[:6].max())`,
-    componentName: 'Stage35FeatureScaling'
+# 2. Decision Logic
+if p_val < alpha:
+    print(f"Decision: REJECT H0 (Statistically significant at alpha={alpha})")
+else:
+    print(f"Decision: FAIL TO REJECT H0 (Consistent with random noise at alpha={alpha})")`,
+    componentName: 'Stage35HypothesisTesting'
   },
   {
     id: '36',

@@ -49,6 +49,7 @@ import Stage33PdfCdfQuantiles from '~/components/analytics/stages/Stage33PdfCdfQ
 import Stage34CorrelationScatter from '~/components/analytics/stages/Stage34CorrelationScatter.vue'
 import Stage33ChunkingLargeFiles from '~/components/analytics/stages/Stage33ChunkingLargeFiles.vue'
 import Stage34RowVsColumnarParquet from '~/components/analytics/stages/Stage34RowVsColumnarParquet.vue'
+import Stage35HypothesisTesting from '~/components/analytics/stages/Stage35HypothesisTesting.vue'
 import Stage35FeatureScaling from '~/components/analytics/stages/Stage35FeatureScaling.vue'
 import Stage36CategoricalEncoding from '~/components/analytics/stages/Stage36CategoricalEncoding.vue'
 import Stage37TrainTestSplitLeakage from '~/components/analytics/stages/Stage37TrainTestSplitLeakage.vue'
@@ -167,6 +168,8 @@ const stageComponent = computed(() => {
       return Stage33ChunkingLargeFiles
     case 'Stage34RowVsColumnarParquet':
       return Stage34RowVsColumnarParquet
+    case 'Stage35HypothesisTesting':
+      return Stage35HypothesisTesting
     case 'Stage35FeatureScaling':
       return Stage35FeatureScaling
     case 'Stage36CategoricalEncoding':
