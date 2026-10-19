@@ -75,7 +75,7 @@ const partColorClass = computed(() => {
             <Clock class="w-3 h-3" /> Preview
           </span>
           <span class="font-mono text-xs font-bold text-muted">
-            #{{ topic.id === 'manual-regression' ? '36' : topic.id }}
+            #{{ topic.id }}
           </span>
         </div>
       </div>

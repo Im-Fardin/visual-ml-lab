@@ -59,13 +59,6 @@ export const ANALYTICS_PARTS: AnalyticsPart[] = [
     desc: 'Probability densities, central tendency, outlier fences, and correlations.',
     color: 'brand-amber',
     track: 'data-analysis'
-  },
-  {
-    id: 'machine-learning',
-    title: 'Machine Learning',
-    desc: 'Empirical loss minimization, gradient descent dynamics, linear modeling, and supervised training engines.',
-    color: 'brand-blue',
-    track: 'machine-learning'
   }
 ]
 
@@ -1442,86 +1435,6 @@ if p_val < alpha:
 else:
     print(f"Decision: FAIL TO REJECT H0 (Consistent with random noise at alpha={alpha})")`,
     componentName: 'Stage35HypothesisTesting'
-  },
-  {
-    id: 'manual-regression',
-    slug: 'manual-regression',
-    aliases: ['36', '36_manual_regression', 'manual-regression', '36_categorical_encoding', 'categorical-encoding'],
-    partId: 'machine-learning',
-    partTitle: 'Machine Learning',
-    track: 'machine-learning',
-    category: 'machine-learning',
-    moduleNumber: 1,
-    moduleTitle: 'ML Foundations & Training Engine',
-    title: '36 • Manual Regression: Loss Surface, Error Squares & The Geometry of OLS',
-    shortDesc: 'Interactive manual parameter exploration (w, b), visualizing geometric squared error areas, centroid pivot invariants, and analytical OLS minimums.',
-    tags: ['Machine Learning', 'Linear Regression', 'OLS', 'Loss Function', 'MSE', 'Residuals', 'Convex Optimization'],
-    invariant: 'L(w, b) = (1/N)·Σ(yᵢ - (wxᵢ + b))² is strictly convex • OLS line must pass through centroid (X̄, Ȳ) • Global minimum at w*, b*',
-    shapeFormula: 'ŷ = wx + b • MSE = (1/N)·Σ eᵢ² • w* = Cov(X,Y)/Var(X) • b* = Ȳ - w*X̄',
-    theory: {
-      title: 'Loss Surfaces, Error Squares & The Geometry of Linear Fit',
-      concept: 'Supervised machine learning seeks model parameters that minimize an empirical loss function. For simple linear regression ŷ = wx + b, Mean Squared Error (MSE) penalizes vertical residuals e_i = y_i - ŷ_i quadratically. When visualized geometrically, each error manifests as a physical square of area e_i²; OLS finds the unique hyperplane that minimizes the total sum of these geometric areas. Because the MSE loss surface is a strictly convex parabolic bowl in (w, b) space, it possesses a single unique global minimum given analytically by the Normal Equation without local minima traps.',
-      practicalInsight: 'The regression line is mathematically forced to pass through the dataset centroid (X̄, Ȳ). Tuning slope w rotates the line around the centroid, while tuning bias b shifts the vertical baseline. Visualizing error squares exposes why L2 loss is heavily distorted by extreme outliers compared to L1 (Mean Absolute Error).'
-    },
-    pythonCode: `import numpy as np
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, r2_score
-
-# Sample dataset
-X = np.array([1.5, 2.2, 3.0, 3.8, 4.5, 5.2, 6.0, 6.8, 7.5, 8.2, 9.0, 9.6]).reshape(-1, 1)
-y = np.array([44.0, 51.5, 55.0, 61.0, 64.5, 70.0, 76.5, 79.0, 84.0, 88.5, 94.0, 97.0])
-
-# 1. Fit Analytical OLS
-model = LinearRegression(fit_intercept=True)
-model.fit(X, y)
-
-w_opt = model.coef_[0]
-b_opt = model.intercept_
-y_hat = model.predict(X)
-
-print(f"Optimal Model: y = {w_opt:.3f}x + {b_opt:.2f}")
-print(f"Minimum MSE: {mean_squared_error(y, y_hat):.3f} | R² Score: {r2_score(y, y_hat):.3f}")`,
-    component: 'Stage36ManualRegression',
-    componentName: 'Stage36ManualRegression'
-  },
-  {
-    id: '37',
-    slug: 'train-test-split-leakage',
-    aliases: ['37_train_test_split_leakage'],
-    partId: 'preprocessing',
-    partTitle: 'Part 3: Feature Engineering & Preprocessing',
-    moduleNumber: 18,
-    moduleTitle: 'Dataset Validation & Partitioning',
-    title: '37 • Dataset Partitioning: Stratification & The Data Leakage Sin',
-    shortDesc: 'Partitioning feature matrices, enforcing balanced target stratification, and upholding the statistical firewall between train and test sets.',
-    tags: ['Preprocessing', 'train_test_split', 'Stratification', 'Data Leakage', 'fit_transform', 'Statistical Firewall'],
-    invariant: 'Transformers must fit() ONLY on X_train; they must merely transform() X_test and X_val',
-    shapeFormula: 'train_test_split(X, y, test_size=0.2, stratify=y) -> X_train, X_test, y_train, y_test',
-    theory: {
-      title: 'The Statistical Firewall & Out-of-Sample Integrity',
-      concept: 'Data leakage occurs when information from outside the training dataset is used to create or fit the model. Fitting any transformer (scaler, imputer, encoder, PCA) on the entire dataset before splitting leaks the test distribution (mean, standard deviation, category vocabulary) into the training pipeline, leading to dangerously optimistic offline metrics and catastrophic real-world failures. Stratification ensures class balance is strictly preserved across partitions for imbalanced targets.',
-      practicalInsight: 'Always wrap preprocessing and estimators into an sklearn Pipeline. Pipelines automatically fit transformers exclusively on training folds during cross-validation, guaranteeing an airtight statistical firewall.'
-    },
-    pythonCode: `from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-import numpy as np
-
-X = np.array([[45], [120], [80], [210], [65], [140], [95], [4800], [5200], [3900]])
-y = np.array([0, 0, 0, 0, 0, 0, 0, 1, 1, 1]) # Imbalanced (30% fraud)
-
-# 1. Split FIRST with stratification
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, stratify=y, random_state=42
-)
-
-# 2. Fit scaler EXCLUSIVELY on training data
-scaler = StandardScaler()
-X_train_scaled = scaler.fit_transform(X_train) # Computes μ_train ONLY
-
-# 3. Transform test data with frozen training parameters
-X_test_scaled = scaler.transform(X_test)
-print("Airtight statistical firewall preserved!")`,
-    componentName: 'Stage37TrainTestSplitLeakage'
   }
 ]
 

@@ -30,9 +30,11 @@ defineProps<{
         <div class="flex items-center gap-2 min-w-0 truncate">
           <span
             class="text-[10px] font-mono uppercase px-2 py-0.5 rounded border shrink-0 hidden md:inline"
-            :class="currentTopic.track === 'machine-learning' || currentTopic.partId === 'machine-learning' || currentTopic.partId === 'ml'
-              ? 'bg-brand-blue-soft text-brand-blue border-brand-blue/20'
-              : 'bg-brand-amber-soft text-brand-amber border-brand-amber/20'"
+            :class="currentTopic.partId === 'statistics'
+              ? 'bg-brand-amber-soft text-brand-amber border-brand-amber/20'
+              : currentTopic.partId === 'pandas'
+                ? 'bg-brand-purple-soft text-brand-purple border-brand-purple/20'
+                : 'bg-brand-blue-soft text-brand-blue border-brand-blue/20'"
           >
             {{ currentTopic.partTitle.split(':')[0] }}
           </span>
@@ -62,7 +64,7 @@ defineProps<{
         </span>
 
         <span class="text-xs font-mono text-muted px-1 hidden sm:inline">
-          {{ currentTopic.id === 'manual-regression' ? '36' : currentTopic.id }} / {{ ANALYTICS_TOPICS.length }}
+          {{ currentTopic.id }} / {{ ANALYTICS_TOPICS.length }}
         </span>
 
         <NuxtLink

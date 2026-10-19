@@ -53,11 +53,19 @@ import Stage35HypothesisTesting from '~/components/analytics/stages/Stage35Hypot
 import Stage35FeatureScaling from '~/components/analytics/stages/Stage35FeatureScaling.vue'
 import Stage36ManualRegression from '~/components/analytics/stages/Stage36ManualRegression.vue'
 import Stage36CategoricalEncoding from '~/components/analytics/stages/Stage36CategoricalEncoding.vue'
+import Stage37TrainingEngine from '~/components/analytics/stages/Stage37TrainingEngine.vue'
 import Stage37TrainTestSplitLeakage from '~/components/analytics/stages/Stage37TrainTestSplitLeakage.vue'
 import StagePlaceholder from '~/components/analytics/stages/StagePlaceholder.vue'
 
 const route = useRoute()
 const slug = computed(() => route.params.slug as string)
+
+// Automatic redirect for ML studio topics if accessed via /analytics
+if (['manual-regression', '36', '36_manual_regression'].includes(route.params.slug as string)) {
+  await navigateTo('/ml/manual-regression')
+} else if (['training-engine', '37', '37_training_engine'].includes(route.params.slug as string)) {
+  await navigateTo('/ml/training-engine')
+}
 
 // Find topic (supports primary slug and aliases)
 const topicIndex = computed(() => {
@@ -177,6 +185,8 @@ const stageComponent = computed(() => {
       return Stage36ManualRegression
     case 'Stage36CategoricalEncoding':
       return Stage36CategoricalEncoding
+    case 'Stage37TrainingEngine':
+      return Stage37TrainingEngine
     case 'Stage37TrainTestSplitLeakage':
       return Stage37TrainTestSplitLeakage
     default:

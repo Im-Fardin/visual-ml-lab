@@ -25,10 +25,10 @@ const studios = [
     icon: Binary,
     features: [
       'Stage 36: Manual Regression & Loss Geometry (Live)',
+      'Stage 37: Forward/Backward Training Engine (Live)',
       'Linear & Polynomial SVM with Margin Bounds',
       'Logistic Regression with Decision Contours',
-      'Interactive Decision Trees & Entropy Splitting',
-      'K-Means Clustering with Centroid Convergence'
+      'Interactive Decision Trees & Entropy Splitting'
     ]
   },
   {

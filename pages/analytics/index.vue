@@ -16,7 +16,7 @@ useHead({
 })
 
 const searchQuery = ref('')
-const selectedPart = ref<'all' | 'numpy' | 'pandas' | 'preprocessing' | 'statistics' | 'machine-learning' | 'ml'>('all')
+const selectedPart = ref<'all' | 'numpy' | 'pandas' | 'preprocessing' | 'statistics'>('all')
 
 // Filtered topics
 const filteredTopics = computed(() => {
@@ -24,9 +24,7 @@ const filteredTopics = computed(() => {
   return ANALYTICS_TOPICS.filter((topic) => {
     const matchesPart =
       selectedPart.value === 'all' ||
-      topic.partId === selectedPart.value ||
-      (selectedPart.value === 'machine-learning' && (topic.partId === 'ml' || topic.partId === 'machine-learning' || topic.track === 'machine-learning')) ||
-      (selectedPart.value === 'ml' && (topic.partId === 'ml' || topic.partId === 'machine-learning' || topic.track === 'machine-learning'))
+      topic.partId === selectedPart.value
     if (!matchesPart) return false
 
     if (!query) return true
@@ -140,14 +138,6 @@ const clearSearch = () => {
               :class="selectedPart === 'statistics' ? 'bg-brand-amber text-white font-semibold shadow-xs' : 'text-muted hover:text-ink'"
             >
               Statistics
-            </button>
-            <button
-              type="button"
-              @click="selectedPart = 'machine-learning'"
-              class="px-3 py-1.5 rounded transition-colors whitespace-nowrap"
-              :class="selectedPart === 'machine-learning' ? 'bg-brand-blue text-white font-semibold shadow-xs' : 'text-muted hover:text-ink'"
-            >
-              Machine Learning
             </button>
           </div>
         </div>
